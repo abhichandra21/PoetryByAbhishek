@@ -35,21 +35,33 @@ const PoemBook = () => {
   const pageVariants = {
     enter: (direction: number) => ({
       x: direction > 0 ? '100%' : '-100%',
-      opacity: 0
+      opacity: 0,
+      rotateY: direction > 0 ? 90 : -90,
+      scale: 0.8
     }),
     center: {
       x: 0,
-      opacity: 1
+      opacity: 1,
+      rotateY: 0,
+      scale: 1
     },
     exit: (direction: number) => ({
       x: direction > 0 ? '-100%' : '100%',
-      opacity: 0
+      opacity: 0,
+      rotateY: direction > 0 ? -90 : 90,
+      scale: 0.8
     })
   }
   
+  const transition = {
+    duration: 0.5,
+    ease: [0.25, 0.1, 0.25, 1],
+  }
+  
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <div className="relative overflow-hidden">
+    <div className="w-full max-w-3xl mx-auto">
+      {/* Book container with perspective */}
+      <div className="relative" style={{ perspective: '1000px' }}>
         <AnimatePresence initial={false} mode="wait" custom={direction}>
           <motion.div
             key={currentPoemId}
@@ -58,7 +70,8 @@ const PoemBook = () => {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.4, ease: "easeInOut" }}
+            transition={transition}
+            style={{ transformOrigin: direction > 0 ? 'left center' : 'right center' }}
           >
             <PoemPage poem={currentPoem} />
           </motion.div>
@@ -70,7 +83,21 @@ const PoemBook = () => {
         onNext={goToNext}
         hasPrevious={currentPoemId > 1}
         hasNext={currentPoemId < poems.length}
+        currentPage={currentPoemId}
+        totalPages={poems.length}
       />
+      
+      {/* Keyboard hint */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2, duration: 1 }}
+        className="text-center mt-6"
+      >
+        <p className="text-xs text-ink-light-tertiary dark:text-ink-dark-tertiary">
+          Use arrow keys or tap to navigate
+        </p>
+      </motion.div>
     </div>
   )
 }

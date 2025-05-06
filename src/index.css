@@ -7,9 +7,14 @@
     scroll-behavior: smooth;
   }
   
+  body {
+    @apply antialiased selection:bg-accent-light/20 dark:selection:bg-accent-dark/20;
+  }
+  
   .hindi {
     font-family: 'Noto Sans Devanagari', sans-serif;
     text-rendering: optimizeLegibility;
+    @apply leading-relaxed;
   }
   
   *:focus-visible {
@@ -28,6 +33,101 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Custom scrollbar styling */
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-paper-accent dark:bg-paper-dark-accent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-sage-light dark:bg-sage-dark rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-accent-light dark:bg-accent-dark;
+  }
+  
+  /* Backdrop blur support fallback */
+  .backdrop-blur-fallback {
+    @supports (backdrop-filter: blur(8px)) {
+      backdrop-filter: blur(8px);
+    }
+    
+    @supports not (backdrop-filter: blur(8px)) {
+      background-color: rgba(249, 245, 241, 0.95);
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      @supports not (backdrop-filter: blur(8px)) {
+        background-color: rgba(10, 9, 8, 0.95);
+      }
+    }
+  }
+}
+
+@layer utilities {
+  /* Text shadows for better contrast on certain backgrounds */
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Aspect ratio utilities for consistent layouts */
+  .aspect-w-4 {
+    aspect-ratio: 4 / 3;
+  }
+  
+  /* Border gradients */
+  .border-gradient {
+    @apply relative;
+  }
+  
+  .border-gradient::before {
+    @apply absolute inset-0 p-[1px] bg-gradient-to-br from-accent-light/50 to-transparent rounded-xl;
+    content: '';
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}
+
+/* Custom animations */
+@keyframes book-page-turn {
+  0% {
+    transform: rotateY(0);
+  }
+  50% {
+    transform: rotateY(90deg);
+  }
+  100% {
+    transform: rotateY(0);
+  }
+}
+
+@keyframes soft-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(139, 111, 91, 0.1);
+  }
+}
+
+/* Dark mode custom properties */
+@media (prefers-color-scheme: dark) {
+  @keyframes soft-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(212, 185, 150, 0.1);
     }
   }
 }
