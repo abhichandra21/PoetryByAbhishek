@@ -1,43 +1,48 @@
+// src/components/ScriptPreference.tsx (updated)
 import {
   createContext,
   useContext,
   useState,
   useEffect,
-  type ReactNode,        // 👈 type‑only import
+  type ReactNode,
 } from 'react';
 
 export type ScriptType = 'devanagari' | 'romanized' | 'translation';
 
-interface CtxShape {
+interface ScriptContextType {
   script: ScriptType;
-  setScript: (s: ScriptType) => void;
+  setScript: (newScript: ScriptType) => void;
 }
 
-const ScriptCtx = createContext<CtxShape | null>(null);
+const ScriptContext = createContext<ScriptContextType | null>(null);
 
 export const ScriptPreferenceProvider = ({ children }: { children: ReactNode }) => {
   const [script, setScript] = useState<ScriptType>('devanagari');
 
-  /* load persisted preference */
+  // Load persisted preference
   useEffect(() => {
-    const saved = localStorage.getItem('preferredScript') as ScriptType | null;
-    if (saved) setScript(saved);
+    const saved = localStorage.getItem('preferredScript');
+    if (saved && ['devanagari', 'romanized', 'translation'].includes(saved)) {
+      setScript(saved as ScriptType);
+    }
   }, []);
 
-  /* persist on change */
+  // Save preference when it changes
   useEffect(() => {
     localStorage.setItem('preferredScript', script);
   }, [script]);
 
   return (
-    <ScriptCtx.Provider value={{ script, setScript }}>
+    <ScriptContext.Provider value={{ script, setScript }}>
       {children}
-    </ScriptCtx.Provider>
+    </ScriptContext.Provider>
   );
 };
 
 export const useScriptPreference = () => {
-  const ctx = useContext(ScriptCtx);
-  if (!ctx) throw new Error('useScriptPreference must be inside provider');
-  return ctx;
+  const context = useContext(ScriptContext);
+  if (!context) {
+    throw new Error('useScriptPreference must be used within a ScriptPreferenceProvider');
+  }
+  return context;
 };

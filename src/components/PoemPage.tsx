@@ -9,7 +9,8 @@ import {
 } from 'react';
 import { motion } from 'framer-motion';
 import type { Poem } from '../types';
-import ScriptToggle, { useScriptPreference } from './ScriptToggle';
+import ScriptToggle from './ScriptToggle';
+import { useScriptPreference } from './ScriptPreference';
 import PoemComments from './PoemComments';
 
 interface PoemPageProps {

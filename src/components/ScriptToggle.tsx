@@ -1,40 +1,19 @@
-// src/components/ScriptToggle.tsx
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-
-export type ScriptType = 'devanagari' | 'romanized' | 'translation'
+// src/components/ScriptToggle.tsx (updated)
+import { motion } from 'framer-motion';
+import { useScriptPreference } from './ScriptPreference'; // Updated import
 
 interface ScriptToggleProps {
   className?: string;
 }
 
-// Hook to use script preference
-export const useScriptPreference = () => {
-  const [script, setScript] = useState<ScriptType>('devanagari')
-
-  useEffect(() => {
-    const saved = localStorage.getItem('preferredScript')
-    if (saved && ['devanagari', 'romanized', 'translation'].includes(saved)) {
-      setScript(saved as ScriptType)
-    }
-  }, [])
-
-  const handleScriptChange = (newScript: ScriptType) => {
-    setScript(newScript)
-    localStorage.setItem('preferredScript', newScript)
-  }
-
-  return { script, setScript: handleScriptChange }
-}
-
 const ScriptToggle: React.FC<ScriptToggleProps> = ({ className = "" }) => {
-  const { script, setScript } = useScriptPreference()
+  const { script, setScript } = useScriptPreference(); // Use the context
   
   const scripts = [
-    { value: 'devanagari' as ScriptType, label: 'हिं', fullLabel: 'देवनागरी' },
-    { value: 'romanized' as ScriptType, label: 'Ro', fullLabel: 'Romanized' },
-    { value: 'translation' as ScriptType, label: 'EN', fullLabel: 'English' }
-  ]
+    { value: 'devanagari' as const, label: 'हिं', fullLabel: 'देवनागरी' },
+    { value: 'romanized' as const, label: 'Ro', fullLabel: 'Romanized' },
+    { value: 'translation' as const, label: 'EN', fullLabel: 'English' }
+  ];
 
   return (
     <div className={`relative ${className}`}>
@@ -69,7 +48,7 @@ const ScriptToggle: React.FC<ScriptToggleProps> = ({ className = "" }) => {
         ))}
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default ScriptToggle
+export default ScriptToggle;
