@@ -1,5 +1,5 @@
 // src/components/PoemPage.tsx
-import type { FC, ReactNode } from 'react';
+import type { FC } from 'react';
 import {
   useState,
   useEffect,
