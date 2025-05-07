@@ -8,4 +8,5 @@ export interface Poem {
   // Optional fields for different scripts
   romanizedTitle?: string;
   romanizedLines?: string[];
+  translations?: Record<string, string>;
 }

@@ -1,7 +1,7 @@
-// src/components/LayoutHeader.tsx (modified version)
-import { FC, useState } from 'react' // Add useState
+import { useState } from 'react'
+import type { FC } from 'react' // Type-only import for FC
 import { Link, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion' // Add AnimatePresence
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface LayoutHeaderProps {
   darkMode: boolean;

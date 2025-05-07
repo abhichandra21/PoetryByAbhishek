@@ -1,5 +1,5 @@
 // src/components/PoemPage.tsx
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import {
   useState,
   useEffect,
@@ -12,6 +12,8 @@ import type { Poem } from '../types';
 import ScriptToggle from './ScriptToggle';
 import { useScriptPreference } from './ScriptPreference';
 import PoemComments from './PoemComments';
+import TranslationTooltip from './TranslationTooltip'; // Import the modern tooltip component
+import allPoemTranslations, { romanToDevanagariMap } from '../translations/poemTranslations';
 
 interface PoemPageProps {
   poem: Poem;
@@ -110,6 +112,101 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     [displayTitle, displayLines, canNativeShare],
   );
 
+  /* ── Add helper function to process line with translations ────── */
+  const processLineWithTranslations = useCallback((line: string) => {
+    // Get appropriate translations based on script
+    const isRoman = script === 'roman';
+    
+    // If the line is empty, return it as-is
+    if (line.trim() === "") return <span>{line}</span>;
+    
+    // Find all words that need tooltips
+    const wordsToReplace: Array<{
+      word: string;
+      translation: string;
+      startIndex: number;
+      endIndex: number;
+    }> = [];
+    
+    if (isRoman) {
+      // For Roman script, use the romanToDevanagariMap
+      for (const romanWord in romanToDevanagariMap) {
+        let startIndex = 0;
+        let index: number;
+        
+        while ((index = line.toLowerCase().indexOf(romanWord.toLowerCase(), startIndex)) !== -1) {
+          const devWord = romanToDevanagariMap[romanWord];
+          const translation = allPoemTranslations[devWord];
+          
+          wordsToReplace.push({
+            word: line.substring(index, index + romanWord.length), // Use original case from poem
+            translation: translation.meaning,
+            startIndex: index,
+            endIndex: index + romanWord.length
+          });
+          startIndex = index + romanWord.length;
+        }
+      }
+    } else {
+      // For Devanagari script, use the direct mapping
+      for (const devWord in allPoemTranslations) {
+        let startIndex = 0;
+        let index: number;
+        
+        while ((index = line.indexOf(devWord, startIndex)) !== -1) {
+          wordsToReplace.push({
+            word: devWord,
+            translation: allPoemTranslations[devWord].meaning,
+            startIndex: index,
+            endIndex: index + devWord.length
+          });
+          startIndex = index + devWord.length;
+        }
+      }
+    }
+    
+    // Sort by startIndex to process from left to right
+    wordsToReplace.sort((a, b) => a.startIndex - b.startIndex);
+    
+    // If no words to replace, return the original line
+    if (wordsToReplace.length === 0) {
+      return <span>{line}</span>;
+    }
+    
+    // Build result with tooltips
+    const result: React.ReactNode[] = [];
+    let lastIndex = 0;
+    
+    for (let i = 0; i < wordsToReplace.length; i++) {
+      const { word, translation, startIndex, endIndex } = wordsToReplace[i];
+      
+      // Add text before this word
+      if (startIndex > lastIndex) {
+        result.push(<span key={`text-${i}`}>{line.substring(lastIndex, startIndex)}</span>);
+      }
+      
+      // Add the word with a tooltip
+      result.push(
+        <TranslationTooltip 
+          key={`tooltip-${i}`} 
+          word={word} 
+          translation={translation}
+        >
+          {line.substring(startIndex, endIndex)}
+        </TranslationTooltip>
+      );
+      
+      lastIndex = endIndex;
+    }
+    
+    // Add any remaining text
+    if (lastIndex < line.length) {
+      result.push(<span key="text-end">{line.substring(lastIndex)}</span>);
+    }
+    
+    return <>{result}</>;
+  }, [script]);
+
   /* ── framer‑motion variants ───────────────────────────────── */
   const lineVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -133,40 +230,6 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         <ScriptToggle />
 
         <div className="flex gap-2">
-          {/* text‑size buttons */}
-          {/* <div className="flex bg-paper-accent dark:bg-paper-dark-accent rounded-lg p-1">
-            {SIZE_BUTTONS.map(({ size, extraClass }) => (
-              <button
-                key={size}
-                onClick={() => handleTextSizeChange(size)}
-                className={`p-2 rounded ${extraClass} ${
-                  textSize === size
-                    ? 'bg-accent-light dark:bg-accent-dark text-paper-light dark:text-paper-dark'
-                    : 'text-ink-light-secondary dark:text-ink-dark-secondary'
-                }`}
-                aria-label={`${size} text size`}
-              >
-                A
-              </button>
-            ))}
-          </div>
-
-          
-          <button
-            onClick={handlePrint}
-            className="p-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors"
-            aria-label="Print poem"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-              />
-            </svg>
-          </button> */}
-
           {/* share */}
           <div className="relative">
             <button
@@ -219,7 +282,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         </div>
       </div>
 
-      {/* visual “book‑page” layer */}
+      {/* visual "book‑page" layer */}
       <div className="absolute inset-0 bg-gradient-to-br from-paper-accent to-paper-light dark:from-paper-dark-accent dark:to-paper-dark rounded-xl shadow-book -z-10" />
 
       {/* main content box */}
@@ -255,7 +318,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
                 script === 'devanagari' ? 'hindi' : 'roman'
               }`}
             >
-              {line}
+              {processLineWithTranslations(line)}
             </motion.p>
           ))}
         </div>
@@ -285,10 +348,26 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         <PoemComments poemId={poem.id} />
       </div>
 
-      {/* print‑specific overrides */}
+      {/* Add CSS variables for tooltip styling */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
+          :root {
+            --tooltip-bg: #faf6f2;
+            --tooltip-text: #333;
+            --tooltip-text-secondary: rgba(0, 0, 0, 0.7);
+            --tooltip-heading: #333;
+            --tooltip-border: rgba(157, 106, 106, 0.6);
+          }
+          
+          .dark {
+            --tooltip-bg: #1e293b;
+            --tooltip-text: #e5e7eb;
+            --tooltip-text-secondary: #cbd5e1;
+            --tooltip-heading: #f3f4f6;
+            --tooltip-border: rgba(209, 154, 154, 0.6);
+          }
+          
           @media print {
             .no-print{display:none!important}
             article{box-shadow:none!important;margin:0!important;padding:20px!important;max-width:100%!important}
