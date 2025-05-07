@@ -12,18 +12,18 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
   const location = useLocation()
   
   const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/' || location.pathname.startsWith('/poem/')
+    if (path === '/read') {
+      return location.pathname === '/read' || location.pathname.startsWith('/poem/')
     }
     return location.pathname === path
   }
 
   const navItems = [
-    { path: '/', label: 'Read', labelHindi: 'पढ़ें' },
-    { path: '/poems', label: 'Index', labelHindi: 'सूची' },
+    { path: '/read', label: 'Read', labelHindi: 'पढ़ें' },
+    { path: '/', label: 'Index', labelHindi: 'सूची' },
     { path: '/about', label: 'About', labelHindi: 'परिचय' },
     { path: '/contact', label: 'Contact', labelHindi: 'संपर्क' },
-  ]
+  ];
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-sm bg-paper-light/80 dark:bg-paper-dark/80 border-b border-ink-light/10 dark:border-ink-dark/10">

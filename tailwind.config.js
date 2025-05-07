@@ -11,52 +11,32 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        hindi: ["'Noto Sans Devanagari'", 'sans-serif'],
+        hindi: ["'Rozha One'", 'sans-serif'],
+        serifHindi: ["'Noto Serif Devanagari'", 'serif'],
+        serifLatin: ['Spectral', 'Georgia', 'serif'],
       },
 
       /*  ─────  Colours  ─────────────────────────────────── */
       colors: {
-        /* paper */
         paper: {
-          DEFAULT: '#F9F5F1', // allows `bg-paper`
-          light: '#F9F5F1',
-          dark: '#0A0908',
-          accent: '#F5EDE3',
-          'dark-accent': '#1A1411',
+          light: '#F8F6F9', // Soft lavender white
+          dark: '#0B0A12',  // Deep blue-black
+          accent: '#EFE9F4', // Lavender hint
+          'dark-accent': '#161525', // Deep indigo
         },
-
-        /* ink */
         ink: {
-          light: '#0A0908',
-          dark: '#F9F5F1',
-          'light-secondary': '#3D3029',
-          'dark-secondary': '#E6DDD4',
-          'light-tertiary': '#6B5A4C',
-          'dark-tertiary': '#B8A598',
+          light: '#1F1A33', // Deep indigo
+          dark: '#F8F6F9',
+          'light-secondary': '#3D355A',
+          'dark-secondary': '#E5E1ED',
         },
-
-        /* accent */
         accent: {
-          DEFAULT: '#8B6F5B', // allows `bg-accent`
-          light: '#8B6F5B',
-          dark: '#D4B996',
+          light: '#6F5B8B', // Lavender
+          dark: '#A99BC1',
           hover: {
-            light: '#6B4E3B',
-            dark: '#E8CDB2',
+            light: '#574873',
+            dark: '#C2B4D8',
           },
-        },
-
-        /* sage */
-        sage: {
-          light: '#A8A598',
-          dark: '#6B6A61',
-        },
-
-        /* states */
-        states: {
-          error: '#D84A3B',
-          success: '#5A8B6F',
-          warning: '#D3A13B',
         },
       },
 

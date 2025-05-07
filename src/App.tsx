@@ -68,7 +68,7 @@ function App() {
         
         <div className="relative w-full max-w-6xl">
           <Routes>
-            <Route path="/" element={<PoemBook />} />
+            <Route path="/" element={<PoemIndex />} />
             <Route path="/poem/:id" element={<PoemBook />} />
             <Route path="/poems" element={<PoemIndex />} />
             <Route path="/about" element={<AuthorBio />} />
