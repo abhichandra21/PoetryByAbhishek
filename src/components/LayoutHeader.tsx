@@ -35,7 +35,7 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
               whileTap={{ scale: 0.98 }}
               className="text-lg md:text-xl font-bold hindi text-ink-light dark:text-ink-dark"
             >
-              <span className="text-accent-light dark:text-accent-dark">अभिषेक</span> की कविताएँ
+              Poetry By <span className="text-accent-light dark:text-accent-dark">Abhishek</span>
             </motion.div>
           </Link>
           

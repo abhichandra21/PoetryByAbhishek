@@ -91,8 +91,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-ink-light dark:text-ink-dark">Email</h3>
-                  <a href="mailto:abhishek@example.com" className="text-accent-light dark:text-accent-dark hover:underline">
-                    abhishek@example.com
+                  <a href="mailto:abhi.chandra@gmail.com" className="text-accent-light dark:text-accent-dark hover:underline">
+                    abhi.chandra@gmail.com
                   </a>
                 </div>
               </div>
@@ -107,9 +107,6 @@ const Contact = () => {
                 <div>
                   <h3 className="font-medium text-ink-light dark:text-ink-dark">Social Media</h3>
                   <div className="flex gap-3 mt-1">
-                    <a href="https://twitter.com/abhishekchandra" target="_blank" rel="noopener noreferrer" className="text-accent-light dark:text-accent-dark hover:underline">
-                      Twitter
-                    </a>
                     <a href="https://linkedin.com/in/abhishekchandra" target="_blank" rel="noopener noreferrer" className="text-accent-light dark:text-accent-dark hover:underline">
                       LinkedIn
                     </a>

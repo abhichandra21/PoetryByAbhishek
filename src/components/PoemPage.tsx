@@ -240,7 +240,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
       </div>
 
       {/* visual “book‑page” layer */}
-      <div className="absolute inset-0 bg-gradient-to-br from-paper-accent to-paper-light dark:from-paper-dark-accent dark:to-paper-dark rounded-xl shadow-book" />
+      <div className="absolute inset-0 bg-gradient-to-br from-paper-accent to-paper-light dark:from-paper-dark-accent dark:to-paper-dark rounded-xl shadow-book -z-10" />
 
       {/* main content box */}
       <div className="relative bg-paper-light dark:bg-paper-dark rounded-xl p-8 md:p-12 shadow-medium border border-ink-light/5 dark:border-ink-dark/5">
