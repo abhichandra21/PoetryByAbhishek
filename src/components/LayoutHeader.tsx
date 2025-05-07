@@ -1,7 +1,7 @@
-// src/components/LayoutHeader.tsx
-import type { FC } from 'react'
+// src/components/LayoutHeader.tsx (modified version)
+import { FC, useState } from 'react' // Add useState
 import { Link, useLocation } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion' // Add AnimatePresence
 
 interface LayoutHeaderProps {
   darkMode: boolean;
@@ -10,6 +10,8 @@ interface LayoutHeaderProps {
 
 const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
   const location = useLocation()
+  // Add state for mobile menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
   const isActive = (path: string) => {
     if (path === '/read') {
@@ -39,7 +41,7 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
             </motion.div>
           </Link>
           
-          {/* Navigation */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (
               <Link
@@ -66,17 +68,24 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
 
           {/* Mobile Menu & Dark Mode Toggle */}
           <div className="flex items-center gap-2">
-            {/* Mobile Menu */}
+            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <motion.button 
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 rounded-full bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors"
-                aria-label="Open menu"
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+                {mobileMenuOpen ? (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                )}
               </motion.button>
             </div>
 
@@ -102,6 +111,37 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden border-t border-ink-light/10 dark:border-ink-dark/10"
+          >
+            <nav className="flex flex-col py-3 px-4 bg-paper-light dark:bg-paper-dark">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`px-4 py-2 rounded-lg my-1 transition-colors ${
+                    isActive(item.path)
+                      ? 'bg-accent-light/10 dark:bg-accent-dark/10 text-accent-light dark:text-accent-dark'
+                      : 'text-ink-light-secondary dark:text-ink-dark-secondary hover:bg-paper-accent dark:hover:bg-paper-dark-accent'
+                  }`}
+                >
+                  <span className="hindi text-base">{item.labelHindi}</span>
+                  <span className="ml-2 text-sm">({item.label})</span>
+                </Link>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   )
 }
