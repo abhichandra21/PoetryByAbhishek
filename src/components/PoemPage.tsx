@@ -20,13 +20,6 @@ interface PoemPageProps {
 /* ───── Text‑size helpers ────────────────────────────────────── */
 export type TextSize = 'small' | 'medium' | 'large' | 'xlarge';
 
-const SIZE_BUTTONS: { size: TextSize; extraClass: string }[] = [
-  { size: 'small', extraClass: 'text-sm' },
-  { size: 'medium', extraClass: '' },
-  { size: 'large', extraClass: 'text-lg' },
-  { size: 'xlarge', extraClass: 'text-xl' },
-];
-
 /* ───── Share helpers ────────────────────────────────────────── */
 type SharePlatform = 'twitter' | 'facebook' | 'whatsapp' | 'copy' | 'native';
 
@@ -47,13 +40,6 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     }
   }, []);
 
-  const handleTextSizeChange = useCallback((size: TextSize) => {
-    setTextSize(size);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('preferredTextSize', size);
-    }
-  }, []);
-
   /* ── derived values ───────────────────────────────────────── */
   const textSizeClass = useMemo(() => {
     const map: Record<TextSize, string> = {
@@ -66,14 +52,12 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
   }, [textSize]);
 
   const displayLines = useMemo(() => {
-    if (script === 'romanized' && poem.romanizedLines) return poem.romanizedLines;
-    if (script === 'translation' && poem.translatedLines) return poem.translatedLines;
+    if (script === 'roman' && poem.romanizedLines) return poem.romanizedLines;
     return poem.lines;
   }, [script, poem]);
 
   const displayTitle = useMemo(() => {
-    if (script === 'romanized' && poem.romanizedTitle) return poem.romanizedTitle;
-    if (script === 'translation' && poem.translatedTitle) return poem.translatedTitle;
+    if (script === 'roman' && poem.romanizedTitle) return poem.romanizedTitle;
     return poem.title;
   }, [script, poem]);
 
@@ -126,11 +110,6 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     [displayTitle, displayLines, canNativeShare],
   );
 
-  /* ── print handler ────────────────────────────────────────── */
-  const handlePrint = useCallback(() => {
-    if (typeof window !== 'undefined') window.print();
-  }, []);
-
   /* ── framer‑motion variants ───────────────────────────────── */
   const lineVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -155,7 +134,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
 
         <div className="flex gap-2">
           {/* text‑size buttons */}
-          <div className="flex bg-paper-accent dark:bg-paper-dark-accent rounded-lg p-1">
+          {/* <div className="flex bg-paper-accent dark:bg-paper-dark-accent rounded-lg p-1">
             {SIZE_BUTTONS.map(({ size, extraClass }) => (
               <button
                 key={size}
@@ -172,7 +151,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
             ))}
           </div>
 
-          {/* print */}
+          
           <button
             onClick={handlePrint}
             className="p-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors"
@@ -186,7 +165,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
                 d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
               />
             </svg>
-          </button>
+          </button> */}
 
           {/* share */}
           <div className="relative">
@@ -273,7 +252,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
               initial="hidden"
               animate="visible"
               className={`${textSizeClass} leading-loose text-ink-light dark:text-ink-dark indent-4 ${
-                script === 'devanagari' ? 'hindi' : ''
+                script === 'devanagari' ? 'hindi' : 'roman'
               }`}
             >
               {line}

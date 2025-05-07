@@ -10,10 +10,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        hindi: ["'Rozha One'", 'sans-serif'],
-        serifHindi: ["'Noto Serif Devanagari'", 'serif'],
-        serifLatin: ['Spectral', 'Georgia', 'serif'],
+        sans: ['merriweather', 'lailaregular'],
+        hindi: ["'merriweather'", 'sans-serif'],
+        serifHindi: ["'merriweather'", 'serif'],
+        serifLatin: ['merriweather', 'Georgia', 'serif'],
       },
 
       /*  ─────  Colours  ─────────────────────────────────── */

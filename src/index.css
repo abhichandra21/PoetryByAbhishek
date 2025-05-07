@@ -12,9 +12,29 @@
   }
   
   .hindi {
-    font-family: 'Noto Sans Devanagari', sans-serif;
+    font-family: 'merriweather', sans-serif;
+    font-size: 20px;
     text-rendering: optimizeLegibility;
+    line-height: 2 !important;
     @apply leading-relaxed;
+  }
+
+  .roman {
+    font-family: 'merriweather', sans-serif;
+    font-size: 20px;
+    text-rendering: optimizeLegibility;
+    line-height: 2 !important;
+    @apply leading-relaxed;
+  }
+  
+  .merriweather_extendedLtIt {
+    font-family: "Merriweather", serif;
+    font-size: 20px;
+    font-optical-sizing: auto;
+    font-style: normal;
+    line-height: 2 !important;
+    font-variation-settings:
+      "wdth" 100;
   }
   
   *:focus-visible {

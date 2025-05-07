@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from 'react';
 
-export type ScriptType = 'devanagari' | 'romanized' | 'translation';
+export type ScriptType = 'devanagari' | 'roman';
 
 interface ScriptContextType {
   script: ScriptType;
@@ -22,7 +22,7 @@ export const ScriptPreferenceProvider = ({ children }: { children: ReactNode }) 
   // Load persisted preference
   useEffect(() => {
     const saved = localStorage.getItem('preferredScript');
-    if (saved && ['devanagari', 'romanized', 'translation'].includes(saved)) {
+    if (saved && ['devanagari', 'roman'].includes(saved)) {
       setScript(saved as ScriptType);
     }
   }, []);

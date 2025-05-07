@@ -11,8 +11,8 @@ const ScriptToggle: React.FC<ScriptToggleProps> = ({ className = "" }) => {
   
   const scripts = [
     { value: 'devanagari' as const, label: 'हिं', fullLabel: 'देवनागरी' },
-    { value: 'romanized' as const, label: 'Ro', fullLabel: 'Romanized' },
-    { value: 'translation' as const, label: 'EN', fullLabel: 'English' }
+    { value: 'roman' as const, label: 'Ro', fullLabel: 'Roman' },
+    //{ value: 'translation' as const, label: 'EN', fullLabel: 'English' }
   ];
 
   return (
