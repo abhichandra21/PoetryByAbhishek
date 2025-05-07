@@ -23,7 +23,7 @@ const AuthorBio = () => {
           className="text-center mb-12"
         >
           <h1 className="text-3xl md:text-4xl font-bold hindi text-accent-light dark:text-accent-dark mb-2">
-            अभिषेक चन्द्रा
+            Abhishek Chandra/अभिषेक चन्द्रा
           </h1>
           <p className="text-ink-light-secondary dark:text-ink-dark-secondary">
             Poet & Writer
@@ -39,15 +39,16 @@ const AuthorBio = () => {
             </h2>
             <div className="prose dark:prose-invert max-w-none">
               <p className="text-ink-light-secondary dark:text-ink-dark-secondary leading-relaxed">
-                Abhishek Chandra is a contemporary Hindi poet whose works explore the intersections of 
-                tradition and modernity, love and loss, and the small moments that make up our daily lives. 
-                Born and raised in Bihar, India, he draws inspiration from the rich tapestry of Indian culture 
-                while addressing universal themes that resonate across boundaries.
+              Abhishek Chandra is a poet whose work bridges continents and languages, 
+              weaving together the delicate threads of memory, longing, and human connection.
+              Born in India and now residing in Milwaukee, his Hindi and Urdu verses explore 
+              the spaces between past and present, silence and expression, absence and belonging.
               </p>
               <p className="text-ink-light-secondary dark:text-ink-dark-secondary leading-relaxed mt-4">
-                His poetry reflects a deep connection to nature, human relationships, and the philosophical 
-                questions that arise from everyday experiences. Through simple yet profound verses, Abhishek 
-                captures the essence of life's fleeting moments, making the ordinary extraordinary.
+              Alongside his career as a software engineer, 
+              Abhishek captures the world both in words and through the lens of his camera,
+              seeking to reveal the poetry that lingers quietly in the everyday. 
+              His work invites readers to pause, reflect, and find meaning in the tender intersections of life’s fleeting moments.
               </p>
             </div>
           </motion.section>
@@ -93,8 +94,8 @@ const AuthorBio = () => {
                   Natural Inspirations
                 </h3>
                 <p className="text-sm text-ink-light-secondary dark:text-ink-dark-secondary">
-                  The changing seasons, rural landscapes, and the simple beauty of everyday life 
-                  in India's countryside
+                Writing in Hindi and Urdu, Abhishek captures moments where nature and emotion intertwine,
+                offering readers a gentle invitation to pause, reflect, and rediscover wonder in the everyday.
                 </p>
               </div>
             </div>

@@ -67,7 +67,7 @@ const Contact = () => {
           className="text-center mb-12"
         >
           <h1 className="text-3xl md:text-4xl font-bold hindi text-accent-light dark:text-accent-dark mb-2">
-            संपर्क करें
+          Connect With Me
           </h1>
           <p className="text-ink-light-secondary dark:text-ink-dark-secondary">
             Get in touch for poetry readings, collaborations, or to share your thoughts
@@ -77,9 +77,6 @@ const Contact = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Contact Information */}
           <motion.div variants={fadeInUp} transition={{ delay: 0.2 }}>
-            <h2 className="text-xl font-bold text-ink-light dark:text-ink-dark mb-6">
-              Connect With Me
-            </h2>
             
             <div className="space-y-6">
               {/* Email */}
@@ -124,7 +121,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-ink-light dark:text-ink-dark">Location</h3>
-                  <p className="text-ink-light-secondary dark:text-ink-dark-secondary">Based in India</p>
+                  <p className="text-ink-light-secondary dark:text-ink-dark-secondary">Based in Milwaukee, Wisconsin, USA</p>
                 </div>
               </div>
             </div>

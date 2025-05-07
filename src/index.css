@@ -26,6 +26,22 @@
     line-height: 2 !important;
     @apply leading-relaxed;
   }
+
+  .icon {
+      width: auto;
+      height: auto;
+      font-size: 12.4px;
+      line-height: 21px;
+      border: 1px solid #c9c9c9;
+      border-radius: 100px;
+      font-family: NotoDevanagariRegular;
+      display: flex;
+      align-items: center;
+      padding: 1px 9px 1px 1px;
+      font-family: 'LatoXRegular','NotoDevanagariRegular','MehrNastaliqRegular';
+      position: absolute;
+      left: 17px
+  }
   
   .merriweather_extendedLtIt {
     font-family: "Merriweather", serif;

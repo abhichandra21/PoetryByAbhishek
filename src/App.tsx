@@ -71,6 +71,7 @@ function App() {
             <Route path="/" element={<PoemIndex />} />
             <Route path="/poem/:id" element={<PoemBook />} />
             <Route path="/poems" element={<PoemIndex />} />
+            <Route path="/read" element={<PoemBook />} />
             <Route path="/about" element={<AuthorBio />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />

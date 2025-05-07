@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom' // Add useLocation
 import { motion, AnimatePresence } from 'framer-motion'
 import PoemPage from './PoemPage.js'  
 import Navigation from './Navigation.js'
@@ -8,15 +8,27 @@ import poems from '../data/poems.json'
 const PoemBook = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation() // Add this
   
-  const [currentPoemId, setCurrentPoemId] = useState(id ? parseInt(id) : 1)
+  const [currentPoemId, setCurrentPoemId] = useState(() => {
+    // If coming from /read route, default to the first poem
+    if (location.pathname === '/read') {
+      return 1
+    }
+    // Otherwise use the ID from URL params or default to 1
+    return id ? parseInt(id) : 1
+  })
+  
   const [direction, setDirection] = useState(0)
   
   const currentPoem = poems.find(poem => poem.id === currentPoemId) || poems[0]
   
   useEffect(() => {
-    navigate(`/poem/${currentPoemId}`, { replace: true })
-  }, [currentPoemId, navigate])
+    // Don't replace the URL if we're on the /read path
+    if (location.pathname !== '/read') {
+      navigate(`/poem/${currentPoemId}`, { replace: true })
+    }
+  }, [currentPoemId, navigate, location.pathname])
   
   const goToPrevious = () => {
     if (currentPoemId > 1) {

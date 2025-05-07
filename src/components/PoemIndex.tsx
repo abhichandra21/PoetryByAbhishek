@@ -2,13 +2,17 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import ScriptToggle from './ScriptToggle'
+import { useScriptPreference } from './ScriptPreference'
 import poems from '../data/poems.json'
+import type { Poem } from '../types'
 
 type ViewMode = 'grid' | 'list'
 
 const PoemIndex = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const { script } = useScriptPreference()
 
   // Filter poems based on search query
   const filteredPoems = useMemo(() => {
@@ -19,6 +23,12 @@ const PoemIndex = () => {
       poem.lines.some(line => line.toLowerCase().includes(searchQuery.toLowerCase()))
     )
   }, [searchQuery])
+
+  // Display title based on script preference - with proper type
+  const getDisplayTitle = (poem: Poem) => {
+    if (script === 'roman' && poem.romanizedTitle) return poem.romanizedTitle
+    return poem.title
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -79,27 +89,31 @@ const PoemIndex = () => {
           </div>
         </div>
 
-        {/* View Toggle */}
+        {/* View Controls */}
         <div className="flex justify-between items-center">
-          <p className="text-sm text-ink-light-secondary dark:text-ink-dark-secondary">
-            {filteredPoems.length} poem{filteredPoems.length !== 1 ? 's' : ''} found
-          </p>
+          <ScriptToggle /> {/* Add the script toggle here */}
           
-          <button
-            onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-            className="p-2 rounded bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors"
-            aria-label={`Switch to ${viewMode === 'grid' ? 'list' : 'grid'} view`}
-          >
-            {viewMode === 'grid' ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-ink-light-secondary dark:text-ink-dark-secondary">
+              {filteredPoems.length} poem{filteredPoems.length !== 1 ? 's' : ''} found
+            </p>
+            
+            <button
+              onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+              className="p-2 rounded bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors"
+              aria-label={`Switch to ${viewMode === 'grid' ? 'list' : 'grid'} view`}
+            >
+              {viewMode === 'grid' ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </motion.div>
 
@@ -124,14 +138,14 @@ const PoemIndex = () => {
                 </div>
 
                 <div className="flex-1">
-                  {/* Title */}
-                  <h2 className="text-xl font-bold hindi text-ink-light dark:text-ink-dark mb-2">
-                    {poem.title}
+                  {/* Title - Update to use script preference */}
+                  <h2 className={`text-xl font-bold text-ink-light dark:text-ink-dark mb-2 ${script === 'devanagari' ? 'hindi' : 'roman'}`}>
+                    {getDisplayTitle(poem)}
                   </h2>
 
-                  {/* First line preview */}
-                  <p className="text-ink-light-secondary dark:text-ink-dark-secondary line-clamp-2 hindi">
-                    {poem.lines[0]}
+                  {/* First line preview - could update to use romanizedLines if needed */}
+                  <p className={`text-ink-light-secondary dark:text-ink-dark-secondary line-clamp-2 ${script === 'devanagari' ? 'hindi' : 'roman'}`}>
+                    {script === 'roman' && poem.romanizedLines ? poem.romanizedLines[0] : poem.lines[0]}
                   </p>
 
                   {/* Tags */}
