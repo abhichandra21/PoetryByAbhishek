@@ -1,9 +1,13 @@
+// src/App.tsx
 import { Routes, Route } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import LayoutHeader from './components/LayoutHeader.js'  
 import LayoutFooter from './components/LayoutFooter.js'  
 import PoemBook from './components/PoemBook.js'          
+import PoemIndex from './components/PoemIndex.js'
+import AuthorBio from './components/AuthorBio.js'
+import Contact from './components/Contact.js'
 import NotFound from './components/NotFound.js'          
 
 function App() {
@@ -62,10 +66,13 @@ function App() {
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent-light dark:bg-accent-dark rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
         </div>
         
-        <div className="relative w-full max-w-4xl">
+        <div className="relative w-full max-w-6xl">
           <Routes>
             <Route path="/" element={<PoemBook />} />
             <Route path="/poem/:id" element={<PoemBook />} />
+            <Route path="/poems" element={<PoemIndex />} />
+            <Route path="/about" element={<AuthorBio />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
