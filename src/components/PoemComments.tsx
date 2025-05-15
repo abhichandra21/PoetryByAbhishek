@@ -1,15 +1,8 @@
 // src/components/PoemComments.tsx
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface Comment {
-  id: string
-  author: string
-  content: string
-  timestamp: string
-  likes: number
-  liked: boolean
-}
+import { supabase, type Comment } from '../lib/supabase'
+import { getSessionId } from '../lib/session'
 
 interface PoemCommentsProps {
   poemId: number
@@ -21,59 +14,139 @@ const PoemComments: React.FC<PoemCommentsProps> = ({ poemId }) => {
   const [author, setAuthor] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
+  const [likedComments, setLikedComments] = useState<Set<string>>(new Set())
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // Load comments for this poem
+  // Load comments and likes
   useEffect(() => {
-    const savedComments = localStorage.getItem(`poem-${poemId}-comments`)
-    if (savedComments) {
-      setComments(JSON.parse(savedComments))
-    }
+    fetchCommentsAndLikes()
   }, [poemId])
 
-  // Save comments to localStorage
-  const saveComments = (updatedComments: Comment[]) => {
-    localStorage.setItem(`poem-${poemId}-comments`, JSON.stringify(updatedComments))
-    setComments(updatedComments)
+  const fetchCommentsAndLikes = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      // Fetch comments with like counts
+      const { data: commentsData, error: commentsError } = await supabase
+        .from('comments_with_likes')
+        .select('*')
+        .eq('poem_id', poemId)
+        .order('created_at', { ascending: false })
+
+      if (commentsError) throw commentsError
+
+      // Fetch user's likes
+      const sessionId = getSessionId()
+      const { data: likesData, error: likesError } = await supabase
+        .from('likes')
+        .select('comment_id')
+        .eq('session_id', sessionId)
+
+      if (likesError) throw likesError
+
+      setComments(commentsData || [])
+      setLikedComments(new Set(likesData?.map(like => like.comment_id) || []))
+    } catch (err) {
+      console.error('Error fetching comments:', err)
+      setError('Failed to load comments')
+    } finally {
+      setLoading(false)
+    }
   }
 
   // Handle adding a new comment
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newComment.trim() || !author.trim()) return
 
     setIsSubmitting(true)
     
-    const newCommentObj: Comment = {
-      id: Date.now().toString(),
-      author: author.trim(),
-      content: newComment.trim(),
-      timestamp: new Date().toISOString(),
-      likes: 0,
-      liked: false
-    }
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .insert([
+          {
+            poem_id: poemId,
+            author: author.trim(),
+            content: newComment.trim()
+          }
+        ])
+        .select()
+        .single()
 
-    const updatedComments = [newCommentObj, ...comments]
-    saveComments(updatedComments)
-    
-    setNewComment('')
-    setAuthor('')
-    setIsSubmitting(false)
-    setShowForm(false)
+      if (error) throw error
+
+      // Add the new comment to the list
+      const commentWithLikes = { ...data, likes_count: 0 }
+      setComments([commentWithLikes, ...comments])
+      
+      setNewComment('')
+      setAuthor('')
+      setShowForm(false)
+    } catch (err) {
+      console.error('Error adding comment:', err)
+      setError('Failed to add comment')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  // Handle liking a comment
-  const handleLike = (commentId: string) => {
-    const updatedComments = comments.map(comment => {
-      if (comment.id === commentId) {
-        return {
-          ...comment,
-          likes: comment.liked ? comment.likes - 1 : comment.likes + 1,
-          liked: !comment.liked
-        }
+  // Handle liking/unliking a comment
+  const handleLike = async (commentId: string) => {
+    const sessionId = getSessionId()
+    const isLiked = likedComments.has(commentId)
+
+    try {
+      if (isLiked) {
+        // Unlike
+        const { error } = await supabase
+          .from('likes')
+          .delete()
+          .eq('comment_id', commentId)
+          .eq('session_id', sessionId)
+
+        if (error) throw error
+
+        // Update UI
+        setLikedComments(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(commentId)
+          return newSet
+        })
+        setComments(prev => prev.map(comment => {
+          if (comment.id === commentId) {
+            return { ...comment, likes_count: (comment.likes_count || 0) - 1 }
+          }
+          return comment
+        }))
+      } else {
+        // Like
+        const { error } = await supabase
+          .from('likes')
+          .insert([
+            {
+              comment_id: commentId,
+              session_id: sessionId
+            }
+          ])
+
+        if (error) throw error
+
+        // Update UI
+        setLikedComments(prev => new Set([...prev, commentId]))
+        setComments(prev => prev.map(comment => {
+          if (comment.id === commentId) {
+            return { ...comment, likes_count: (comment.likes_count || 0) + 1 }
+          }
+          return comment
+        }))
       }
-      return comment
-    })
-    saveComments(updatedComments)
+    } catch (err) {
+      console.error('Error updating like:', err)
+      setError('Failed to update like')
+    }
   }
 
   // Format timestamp
@@ -85,7 +158,20 @@ const PoemComments: React.FC<PoemCommentsProps> = ({ poemId }) => {
     if (diffInSeconds < 60) return 'just now'
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
-    return `${Math.floor(diffInSeconds / 86400)}d ago`
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`
+    
+    return date.toLocaleDateString()
+  }
+
+  if (loading) {
+    return (
+      <div className="mt-12 pt-8 border-t border-ink-light/10 dark:border-ink-dark/10">
+        <div className="text-center py-8">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent-light dark:border-accent-dark"></div>
+          <p className="mt-2 text-ink-light-secondary dark:text-ink-dark-secondary">Loading comments...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -95,6 +181,12 @@ const PoemComments: React.FC<PoemCommentsProps> = ({ poemId }) => {
       transition={{ delay: 0.6 }}
       className="mt-12 pt-8 border-t border-ink-light/10 dark:border-ink-dark/10"
     >
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-lg">
+          {error}
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold text-ink-light dark:text-ink-dark">
           Reflections ({comments.length})
@@ -169,21 +261,21 @@ const PoemComments: React.FC<PoemCommentsProps> = ({ poemId }) => {
                     {comment.author}
                   </h4>
                   <p className="text-xs text-ink-light-tertiary dark:text-ink-dark-tertiary">
-                    {formatTime(comment.timestamp)}
+                    {formatTime(comment.created_at)}
                   </p>
                 </div>
                 <button
                   onClick={() => handleLike(comment.id)}
                   className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
-                    comment.liked
+                    likedComments.has(comment.id)
                       ? 'bg-accent-light/20 dark:bg-accent-dark/20 text-accent-light dark:text-accent-dark'
                       : 'hover:bg-ink-light/5 dark:hover:bg-ink-dark/5 text-ink-light-tertiary dark:text-ink-dark-tertiary'
                   }`}
                 >
-                  <svg className="w-3 h-3" fill={comment.liked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3" fill={likedComments.has(comment.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
-                  {comment.likes || 0}
+                  {comment.likes_count || 0}
                 </button>
               </div>
               <p className="text-ink-light-secondary dark:text-ink-dark-secondary whitespace-pre-wrap">
@@ -193,7 +285,7 @@ const PoemComments: React.FC<PoemCommentsProps> = ({ poemId }) => {
           ))}
         </AnimatePresence>
         
-        {comments.length === 0 && (
+        {comments.length === 0 && !loading && (
           <div className="text-center py-8 text-ink-light-tertiary dark:text-ink-dark-tertiary">
             No reflections yet. Be the first to share your thoughts!
           </div>
