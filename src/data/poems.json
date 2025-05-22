@@ -419,7 +419,7 @@
       "पर तेरा जमाल दिल से जाता ही नहीं",
       " ",
       "तेरी आवाज़, तेरी बातें, तेरे अल्फ़ाज़ सभी",
-      "तेरा ख़्वाबो-ख़याल दिल से जाता ही नहीं",
+      "तेरा ख़्वाब-ओ-ख़याल दिल से जाता ही नहीं",
       "क़रीब आ कर भी दूरियों का एहसास रहा",
       "मिलके बिछड़ने का वो हाल, दिल से जाता ही नहीं"
     ],
@@ -435,10 +435,58 @@
       "par teraa jamaal dil se jaataa hii nahiin",
       " ",
       "terii aavaaz, terii baaten, tere alfaaz sabhii",
-      "teraa khvaabo-khayaal dil se jaataa hii nahiin",
+      "teraa khvaab-o-khayaal dil se jaataa hii nahiin",
       "qariib aa kar bhii dooriyon kaa ehasaas rahaa",
       "milake bichhadane kaa vo haal, dil se jaataa hii nahiin"
     ],
     "tags": []
-  }  
+  },
+  {
+    "id": 11,
+    "title": "कुछ था जो खो गया है",
+    "romanizedTitle": "kuchh thaa jo kho gayaa hai",
+    "lines": [
+      "कुछ था जो खो गया है,",
+      "कुछ था, जो नहीं रहा अब।",
+      "यादों के शीशे में अक्सर,",
+      "एक चेहरा धुंधला-सा है अब।",
+      " ",
+      "बीती रातों की ख़ुशबू भी,",
+      "बिखरी देरिना राहों में,",
+      "वो जो लम्हा था अपना-सा,",
+      "दूर कहीं सिमटा है अब।",
+      " ",
+      "किसी मोड़ पर छूटा था,",
+      "वो एक ख़्वाब अधूरा है,",
+      "दिल के सहरा में तन्हा,",
+      "एक दरिया सूखा है अब।",
+      " ",
+      "कुछ रिश्तों की परछाईं भी,",
+      "हैं यादों में ठहरी-सी,",
+      "क्या पाया, क्या खो बैठा,",
+      "इसमें क्या रखा है अब"
+    ],
+    "romanizedLines": [
+      "kuchh thaa jo kho gayaa hai,",
+      "kuchh thaa, jo nahii.n rahaa ab.",
+      "yaado.n ke shiishe me.n aksar,",
+      "ek chehraa dhu.ndhlaa-saa hai ab.",
+      " ",
+      "biitii raaton kii khu.shbuu bhii,",
+      "bikhrii deriina raaho.n me.n,",
+      "vo jo lamhaa thaa apnaa-saa,",
+      "duuur kahi.n simtaa hai ab.",
+      " ",
+      "kisii mo.D par ChhuuTaa thaa,",
+      "vo ek Khvaab adhuuraa hai,",
+      "dil ke sahraa me.n tanhaa,",
+      "ek dariyaa suukhaa hai ab.",
+      " ",
+      "kuchh rishto.n kii parChaainii.n bhii,",
+      "hai.n yaado.n me.n Thahrii-sii,",
+      "kyaa paayaa, kyaa kho baiThaa,",
+      "isme.n kyaa rakhaa hai ab."
+    ],
+    "tags": []
+  }   
 ]

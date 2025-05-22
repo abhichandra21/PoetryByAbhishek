@@ -43,7 +43,7 @@ const ScriptToggle: React.FC<ScriptToggleProps> = ({ className = "" }) => {
         
         {/* Text label */}
         <span className={`px-2 py-1 text-ink-light-secondary dark:text-ink-dark-secondary`}>
-          {script === 'devanagari' ? 'देवनागरी' : 'Roman'}
+          {script === 'devanagari' ? 'Roman' : 'देवनागरी'}
         </span>
       </button>
     </div>
