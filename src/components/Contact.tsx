@@ -133,7 +133,13 @@ const Contact = () => {
               Send a Message
             </h2>
             
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4"
+              name="contact" // Add this name
+              method="POST" // Use POST
+              data-netlify="true" // This is the magic attribute
+            >
+              {/* This hidden input is required by Netlify */}
+              <input type="hidden" name="form-name" value="contact" />
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-ink-light dark:text-ink-dark mb-1">
                   Name
