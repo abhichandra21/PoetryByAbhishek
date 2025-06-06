@@ -1,4 +1,5 @@
 // src/App.tsx
+
 import { Routes, Route } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
@@ -8,7 +9,8 @@ import PoemBook from './components/PoemBook.js'
 import PoemIndex from './components/PoemIndex.js'
 import AuthorBio from './components/AuthorBio.js'
 import Contact from './components/Contact.js'
-import NotFound from './components/NotFound.js'          
+import NotFound from './components/NotFound.js'     
+import DebugEnv from './components/DebugEnv'
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -60,6 +62,7 @@ function App() {
       <LayoutHeader darkMode={darkMode} setDarkMode={setDarkMode} />
       
       <main className="flex-grow flex items-center justify-center px-4 py-8 relative">
+        {import.meta.env.MODE === 'development' && <DebugEnv />}
         {/* Decorative background patterns */}
         <div className="absolute inset-0 overflow-hidden opacity-5 dark:opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-accent-light dark:bg-accent-dark rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
