@@ -12,7 +12,8 @@ import type { Poem } from '../types';
 import ScriptToggle from './ScriptToggle';
 import { useScriptPreference } from './ScriptPreference';
 import PoemComments from './PoemComments';
-import TranslationTooltip from './TranslationTooltip'; // Import the modern tooltip component
+import PoemLike from './PoemLike'; // Add this import
+import TranslationTooltip from './TranslationTooltip';
 import allPoemTranslations, { romanToDevanagariMap } from '../translations/poemTranslations';
 
 interface PoemPageProps {
@@ -103,7 +104,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
 
       if (platform === 'copy') {
         await navigator.clipboard.writeText(url);
-        alert('Link copied to clipboard'); // swap for toast.success when ready
+        alert('Link copied to clipboard');
       } else if (platform !== 'native') {
         window.open(urls[platform], '_blank', 'noopener');
       }
@@ -227,7 +228,11 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     >
       {/* Controls bar */}
       <div className="flex flex-wrap gap-3 mb-6 items-center justify-between">
-        <ScriptToggle />
+        <div className="flex items-center gap-3">
+          <ScriptToggle />
+          {/* Like button */}
+          <PoemLike poemId={poem.id} className="scale-75" />
+        </div>
 
         <div className="flex gap-2">
           {/* share */}
@@ -294,15 +299,18 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
           </svg>
         </div>
 
+        {/* Like button - positioned prominently at the top */}
+        {/* Removed - now in controls bar */}
+
         {/* title */}
         <motion.h1
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1, duration: 0.4 }}
-          className={`${textSizeClass} font-bold mb-8 hindi text-accent-light dark:text-accent-dark relative`}
+          className={`${textSizeClass} font-bold mb-8 hindi text-accent-light dark:text-accent-dark relative text-center`}
         >
           {displayTitle}
-          <span className="absolute -bottom-2 left-0 w-16 h-0.5 bg-gradient-to-r from-accent-light dark:from-accent-dark to-transparent opacity-50" />
+          <span className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-0.5 bg-gradient-to-r from-accent-light dark:from-accent-dark to-transparent opacity-50" />
         </motion.h1>
 
         {/* lines */}
