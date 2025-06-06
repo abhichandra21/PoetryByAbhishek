@@ -21,14 +21,36 @@ const Navigation: FC<NavigationProps> = ({
 }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Only allow arrow key navigation
+      // Don't trigger navigation if user is typing in a form element
+      const target = e.target as HTMLElement
+      const tagName = target.tagName.toLowerCase()
+      
+      const isTyping = tagName === 'input' || 
+                      tagName === 'textarea' || 
+                      tagName === 'select' ||
+                      target.contentEditable === 'true' ||
+                      target.getAttribute('contenteditable') === 'true' ||
+                      target.closest('form') !== null ||
+                      target.closest('[contenteditable="true"]') !== null ||
+                      target.closest('input, textarea, select, [contenteditable]') !== null
+
+      if (isTyping) return
+
       switch (e.key) {
         case 'ArrowLeft':
-          if (hasPrevious) onPrevious()
+          if (hasPrevious) {
+            e.preventDefault()
+            onPrevious()
+          }
           break
         case 'ArrowRight':
-        case ' ':
-          if (hasNext) onNext()
+          if (hasNext) {
+            e.preventDefault()
+            onNext()
+          }
           break
+        // Removed spacebar case completely
         default:
           break
       }
