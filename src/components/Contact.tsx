@@ -29,18 +29,34 @@ const Contact = () => {
     setIsSubmitting(true)
     
     try {
-      // Here you would typically send the form data to your backend
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Create FormData object for Netlify
+      const formDataObj = new FormData()
+      formDataObj.append('form-name', 'contact')
+      formDataObj.append('name', formData.name)
+      formDataObj.append('email', formData.email)
+      formDataObj.append('subject', formData.subject)
+      formDataObj.append('message', formData.message)
+
+      // Submit to Netlify
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formDataObj as any).toString()
+      })
+
+      if (response.ok) {
+        setSubmitStatus('success')
+        setFormData({ name: '', email: '', subject: '', message: '' })
+      } else {
+        throw new Error('Form submission failed')
+      }
       
-      setSubmitStatus('success')
-      setFormData({ name: '', email: '', subject: '', message: '' })
-      
-      // Reset status after 3 seconds
-      setTimeout(() => setSubmitStatus('idle'), 3000)
+      // Reset status after 5 seconds
+      setTimeout(() => setSubmitStatus('idle'), 5000)
     } catch (error) {
+      console.error('Form submission error:', error)
       setSubmitStatus('error')
-      setTimeout(() => setSubmitStatus('idle'), 3000)
+      setTimeout(() => setSubmitStatus('idle'), 5000)
     } finally {
       setIsSubmitting(false)
     }
@@ -133,13 +149,37 @@ const Contact = () => {
               Send a Message
             </h2>
             
-            <form onSubmit={handleSubmit} className="space-y-4"
-              name="contact" // Add this name
-              method="POST" // Use POST
-              data-netlify="true" // This is the magic attribute
+            {/* Hidden form for Netlify bot detection */}
+            <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+              <input type="text" name="name" />
+              <input type="email" name="email" />
+              <select name="subject">
+                <option value="poetry-reading">Poetry Reading Request</option>
+                <option value="collaboration">Collaboration Opportunity</option>
+                <option value="general">General Inquiry</option>
+                <option value="feedback">Feedback on Poems</option>
+                <option value="other">Other</option>
+              </select>
+              <textarea name="message"></textarea>
+            </form>
+
+            {/* Actual form */}
+            <form 
+              name="contact" 
+              method="POST" 
+              data-netlify="true" 
+              data-netlify-honeypot="bot-field"
+              onSubmit={handleSubmit} 
+              className="space-y-4"
             >
-              {/* This hidden input is required by Netlify */}
+              {/* Hidden fields for Netlify */}
               <input type="hidden" name="form-name" value="contact" />
+              <p className="hidden">
+                <label>
+                  Don't fill this out if you're human: <input name="bot-field" />
+                </label>
+              </p>
+
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-ink-light dark:text-ink-dark mb-1">
                   Name
@@ -223,7 +263,7 @@ const Contact = () => {
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-states-success text-sm text-center"
+                  className="text-green-600 dark:text-green-400 text-sm text-center"
                 >
                   Thank you! Your message has been sent successfully.
                 </motion.p>
@@ -233,7 +273,7 @@ const Contact = () => {
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-states-error text-sm text-center"
+                  className="text-red-600 dark:text-red-400 text-sm text-center"
                 >
                   Sorry, there was an error sending your message. Please try again.
                 </motion.p>
