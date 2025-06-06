@@ -10,8 +10,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['merriweather', 'lailaregular'],
-        hindi: ["'merriweather'", 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Lora', 'serif'],
+        hindi: ['Lora', 'serif'], 
         serifHindi: ["'merriweather'", 'serif'],
         serifLatin: ['merriweather', 'Georgia', 'serif'],
       },

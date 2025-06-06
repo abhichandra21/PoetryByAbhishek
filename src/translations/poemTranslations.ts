@@ -105,7 +105,7 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "अल्फ़ाज़": { meaning: "words", roman: "alfaaz" },
     //"ख़्वाब-ओ-ख़याल": { meaning: "dreams and thoughts", roman: "khvaab-o-khayaal" },
     "एहसास": { meaning: "feeling, sense", roman: "ehasaas" },
-    "हाल": { meaning: "state, condition", roman: "haal" },
+    //"हाल": { meaning: "state, condition", roman: "haal" },
     "देरीना": { meaning: "long-held, old", roman: "deriina" },
     "सहरा": { meaning: "desert, waste, wilderness", roman: "sahraa" },
 

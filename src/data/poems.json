@@ -45,7 +45,7 @@
       "dil duniyaan kii baaten sau aur unamen guzrii raaten sau",
       "dil duniyaan kii baaton men ham, sapane roz sajaate sau"
     ],
-    "tags": []
+    "tags": ["memories", "life journey", "nostalgia", "emotions", "dreams", "nature metaphors"]
   },
   {
     "id": 2,
@@ -83,7 +83,7 @@
       "jiitaa hii rahaa, saansen ginate, haanthon men zanjiiren Daale",
       "chalanaa naa chaahen kadam agar, to phir raah dikhaae kaun"
     ],
-    "tags": []
+    "tags": ["loneliness", "existential questions", "solitude", "unfulfilled desires", "silence", "philosophical"]
   },
   {
     "id": 3,
@@ -123,7 +123,7 @@
       "ek lamhaa mujhe aur mil jaae isii ummiid main",
       "faasale jo daramyaan hain, todane kaa man kiyaa"
     ],
-    "tags": []
+    "tags": ["family bonds", "sisterly love", "childhood memories", "distance", "hope", "communication"]
   },
   {
     "id": 4,
@@ -181,7 +181,7 @@
       "kab tak terii yaad se jii manaaen,",
       "mujhe bas terii ek, khabar laa ke de do"
     ],
-    "tags": []
+    "tags": ["ghazal", "urdu poetry", "longing", "companionship", "home", "hope", "divine plea"]
   },
   {
     "id": 5,
@@ -221,7 +221,7 @@
       "magar ek tiis rahatii hai, kuchh dam tod jaataa hai,",
       "mujhe ghar yaad aataa hai"
     ],
-    "tags": []
+    "tags": ["homesickness", "migration", "family", "roots", "melancholy", "displacement"]
   },
   {
     "id": 6,
@@ -271,7 +271,7 @@
       "bas itanaa hiin kaafii hai, saansen chal rahii hai ab bhii,",
       "sham'-e-ummiid ko imroz bujhaae naa koii"
     ],
-    "tags": []
+    "tags": ["despair", "exhaustion", "surrender", "peace", "resignation", "emotional wounds", "hope"]
   },
   {
     "id": 7,
@@ -309,7 +309,7 @@
       "ahasaas bikhar jaaenge, taqdiir badal jaaegii,",
       "vo raat yoon hii biitii thii, ye raat bhii Dhal jaaegii"
     ],
-    "tags": []
+    "tags": ["resilience", "healing", "time passage", "cyclical pain", "hope", "solitude", "night"]
   },
   {
     "id": 8,
@@ -359,7 +359,7 @@
       "kahaanii adhoorii naa hotii, naa hotii jo majbooriyaan bhii",
       "phir ek baar milane kii hasarat, … men palatii to hogii"
     ],
-    "tags": []
+    "tags": ["love", "separation", "longing", "distance", "communication", "unspoken feelings", "hope"]
   },
   {
     "id": 9,
@@ -401,7 +401,7 @@
       "usii lau men, merii nishaanii khaak ho jaatii,",
       "to phir baat kyaa thii"
     ],
-    "tags": []
+    "tags": ["regret", "missed opportunities", "communication", "unfulfilled promises", "what if", "relationships"]
   },
   {
     "id": 10,
@@ -439,7 +439,7 @@
       "qariib aa kar bhii dooriyon kaa ehasaas rahaa",
       "milake bichhadane kaa vo haal, dil se jaataa hii nahiin"
     ],
-    "tags": []
+    "tags": ["persistent memories", "love", "separation", "ghazal", "unable to forget", "distance"]
   },
   {
     "id": 11,
@@ -487,66 +487,66 @@
       "kyaa paayaa, kyaa kho baiThaa,",
       "isme.n kyaa rakhaa hai ab."
     ],
-    "tags": []
+    "tags": ["loss", "fading memories", "relationships", "emptiness", "existential", "melancholy"]
   },
-{
-  "id": 12,
-  "title": "ज़रा ये रात ढल जाए",
-  "romanizedTitle": "zara ye raat dhal jaye",
-  "lines": [
-    "ज़रा ये रात ढल जाए, ज़रा मंज़र बदल जाये ।",
-    "",
-    "हवा चुप है, फ़ज़ा बोझल, दरख़्तों पर है वीरानी,",
-    "ये सर्दी, ये उदासी, ये सिहरता आसमाँ कब तक?",
-    "मैं जिन रास्तों पे चलता रहा तन्हा कई सदियाँ,",
-    "इक नक़्श-ए-क़दम किसी और का कभी नजर आये।",
-    "ज़रा ये रात ढल जाए, ज़रा मंज़र बदल जाये ।",
-    "",
-    "बहुत हैं बातें कहने को, मगर लब पे नहीं आतीं,",
-    "कहीं एक मोड़ तो होगा, जहाँ अल्फ़ाज़ मिलते हैं?",
-    "मेरी आवाज़ गर तुम तक, नहीं जाती तो क्या हासिल,",
-    "कभी ऐसा भी हो ख़ामोशी मेरी, तुम तक पहुँच जाये।",
-    "ज़रा ये रात ढल जाए, ज़रा मंज़र बदल जाये ।",
-    "",
-    "कोई सपना, जो पलकों पर कई मौसम से ठहरा है,",
-    "कि जैसे अनलिखे से हर्फ़, ज़ेहन-ओ-दिल के काग़ज़ पर।",
-    "ये जो आँखों में ठहरा है समंदर इंतज़ारी का,",
-    "किसी दिन इसके साहिल पर कोई कश्ती नज़र आये।",
-    "ज़रा ये रात ढल जाए, ज़रा मंज़र बदल जाये ।",
-    "",
-    "ये जो एहसास का सहरा है, मेरी ज़ात में फैला,",
-    "कि जैसे इक पुराने ताक़ पर तस्वीर धुँधली सी,",
-    "गुज़रते वक़्त की आहट, फ़क़त देती है मायूसी,",
-    "वही आहट कोई उम्मीद की दस्तक भी दे जाये।",
-    "ज़रा ये रात ढल जाए, ज़रा मंज़र बदल जाये ।"
-  ],
-  "romanizedLines": [
-    "zara ye raat dhal jaye, zara manzar badal jaye",
-    "",
-    "hawa chup hai, faza bojhal, darakton par hai veerani,",
-    "ye sardi, ye udasi, ye siharta asman kab tak?",
-    "main jin raston pe chalta raha tanha kai sadiyan,",
-    "ik naqsh-e-qadam kisi aur ka kabhi nazar aaye.",
-    "zara ye raat dhal jaye, zara manzar badal jaye",
-    "",
-    "bahut hain baaten kehne ko, magar lab pe nahin aatin,",
-    "kahin ek mod to hoga, jahan alfaaz milte hain?",
-    "meri awaaz gar tum tak, nahin jaati to kya hasil,",
-    "kabhi aisa bhi ho khamoshi meri, tum tak pahunch jaye.",
-    "zara ye raat dhal jaye, zara manzar badal jaye",
-    "",
-    "koi sapna, jo palkon par kai mausam se thehra hai,",
-    "ki jaise anlikhe se harf, zehn-o-dil ke kagaz par.",
-    "ye jo aankhon mein thehra hai samandar intezari ka,",
-    "kisi din iske sahil par koi kashti nazar aaye.",
-    "zara ye raat dhal jaye, zara manzar badal jaye",
-    "",
-    "ye jo ehsaas ka sehra hai, meri zaat mein faila,",
-    "ki jaise ik purane taaq par tasveer dhundhli si,",
-    "guzarte waqt ki aahat, faqat deti hai mayusi,",
-    "wahi aahat koi ummeed ki dastak bhi de jaye.",
-    "zara ye raat dhal jaye, zara manzar badal jaye"
-  ],
-  "tags": []
-}  
+  {
+    "id": 12,
+    "title": "ज़रा ये रात ढल जाए",
+    "romanizedTitle": "zara ye raat dhal jaye",
+    "lines": [
+      "ज़रा ये रात ढल जाए, ज़रा मंज़र बदल जाये ।",
+      "",
+      "हवा चुप है, फ़ज़ा बोझल, दरख़्तों पर है वीरानी,",
+      "ये सर्दी, ये उदासी, ये सिहरता आसमाँ कब तक?",
+      "मैं जिन रास्तों पे चलता रहा तन्हा कई सदियाँ,",
+      "इक नक़्श-ए-क़दम किसी और का कभी नजर आये।",
+      "ज़रा ये रात ढल जाए, ज़रा मंज़र बदल जाये ।",
+      "",
+      "बहुत हैं बातें कहने को, मगर लब पे नहीं आतीं,",
+      "कहीं एक मोड़ तो होगा, जहाँ अल्फ़ाज़ मिलते हैं?",
+      "मेरी आवाज़ गर तुम तक, नहीं जाती तो क्या हासिल,",
+      "कभी ऐसा भी हो ख़ामोशी मेरी, तुम तक पहुँच जाये।",
+      "ज़रा ये रात ढल जाए, ज़रा मंज़र बदल जाये ।",
+      "",
+      "कोई सपना, जो पलकों पर कई मौसम से ठहरा है,",
+      "कि जैसे अनलिखे से हर्फ़, ज़ेहन-ओ-दिल के काग़ज़ पर।",
+      "ये जो आँखों में ठहरा है समंदर इंतज़ारी का,",
+      "किसी दिन इसके साहिल पर कोई कश्ती नज़र आये।",
+      "ज़रा ये रात ढल जाए, ज़रा मंज़र बदल जाये ।",
+      "",
+      "ये जो एहसास का सहरा है, मेरी ज़ात में फैला,",
+      "कि जैसे इक पुराने ताक़ पर तस्वीर धुँधली सी,",
+      "गुज़रते वक़्त की आहट, फ़क़त देती है मायूसी,",
+      "वही आहट कोई उम्मीद की दस्तक भी दे जाये।",
+      "ज़रा ये रात ढल जाए, ज़रा मंज़र बदल जाये ।"
+    ],
+    "romanizedLines": [
+      "zara ye raat dhal jaye, zara manzar badal jaye",
+      "",
+      "hawa chup hai, faza bojhal, darakton par hai veerani,",
+      "ye sardi, ye udasi, ye siharta asman kab tak?",
+      "main jin raston pe chalta raha tanha kai sadiyan,",
+      "ik naqsh-e-qadam kisi aur ka kabhi nazar aaye.",
+      "zara ye raat dhal jaye, zara manzar badal jaye",
+      "",
+      "bahut hain baaten kehne ko, magar lab pe nahin aatin,",
+      "kahin ek mod to hoga, jahan alfaaz milte hain?",
+      "meri awaaz gar tum tak, nahin jaati to kya hasil,",
+      "kabhi aisa bhi ho khamoshi meri, tum tak pahunch jaye.",
+      "zara ye raat dhal jaye, zara manzar badal jaye",
+      "",
+      "koi sapna, jo palkon par kai mausam se thehra hai,",
+      "ki jaise anlikhe se harf, zehn-o-dil ke kagaz par.",
+      "ye jo aankhon mein thehra hai samandar intezari ka,",
+      "kisi din iske sahil par koi kashti nazar aaye.",
+      "zara ye raat dhal jaye, zara manzar badal jaye",
+      "",
+      "ye jo ehsaas ka sehra hai, meri zaat mein faila,",
+      "ki jaise ik purane taaq par tasveer dhundhli si,",
+      "guzarte waqt ki aahat, faqat deti hai mayusi,",
+      "wahi aahat koi ummeed ki dastak bhi de jaye.",
+      "zara ye raat dhal jaye, zara manzar badal jaye"
+    ],
+    "tags": ["ghazal", "urdu poetry", "longing", "hope", "night", "solitude", "waiting", "change", "despair"]
+  }
 ]

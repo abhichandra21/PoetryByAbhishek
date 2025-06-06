@@ -27,6 +27,13 @@
     @apply leading-relaxed;
   }
 
+  .hindi, .roman {
+    @apply font-serif; /* Use the new serif font (Lora) */
+    font-size: 1.2rem; /* A slightly more readable base size */
+    @apply leading-loose md:leading-loose; /* Increase line spacing */
+    text-rendering: optimizeLegibility;
+  }
+    
   .icon {
       width: auto;
       height: auto;
