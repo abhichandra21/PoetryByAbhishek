@@ -107,7 +107,16 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "एहसास": { meaning: "feeling, sense", roman: "ehasaas" },
     "हाल": { meaning: "state, condition", roman: "haal" },
     "देरीना": { meaning: "long-held, old", roman: "deriina" },
-    "सहरा": { meaning: "desert, waste, wilderness", roman: "sahraa" }
+    "सहरा": { meaning: "desert, waste, wilderness", roman: "sahraa" },
+
+    // Poem 10
+    "फ़ज़ा": { meaning: "ambience", roman: "fazaa" },
+    "दरख़्तों": { meaning: "trees", roman: "daraKto.n" },
+    "सिहरता": { meaning: "shivered", roman: "siharta" },
+    "नक़्श-ए-क़दम": { meaning: "footprints/footsteps", roman: "naqsh-e-qadam" },
+    "मंज़र": { meaning: "spectacle, a scene, view", roman: "ma.nzar" },
+    "साहिल": { meaning: "the sea-shore, beach, coast", roman: "saahil" },
+    "फ़क़त": { meaning: "merely, simply, only", roman: "faqat" }
   };
   
 // Create a reverse mapping from Roman to Devanagari
