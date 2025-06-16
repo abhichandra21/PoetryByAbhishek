@@ -39,6 +39,7 @@ export const ScriptPreferenceProvider = ({ children }: { children: ReactNode }) 
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useScriptPreference = () => {
   const context = useContext(ScriptContext);
   if (!context) {
