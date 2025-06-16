@@ -52,3 +52,13 @@ export default tseslint.config({
   },
 })
 ```
+
+## Subscribing to New Poems
+
+To let readers receive updates when a new poem is added, a simple subscription system is included.
+
+1. Create a `subscribers` table in Supabase with at least an `email` column.
+2. Deploy the site with your Supabase credentials in `.env.local`.
+3. Visitors can sign up on the `/subscribe` page.
+4. After adding new poems to `src/data/poems.json`, run `node scripts/sendNewPoemEmails.js` to log email notifications (replace the logging with your email service to actually send messages).
+
