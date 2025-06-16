@@ -54,6 +54,7 @@ export default {
         soft: '0 2px 8px rgba(0,0,0,0.05)',
         medium: '0 4px 16px rgba(0,0,0,0.1)',
         book: '0 8px 24px rgba(0,0,0,0.15)',
+        deep: '0 12px 32px rgba(0,0,0,0.2)',
         'inner-soft': 'inset 0 1px 2px rgba(0,0,0,0.05)',
       },
       backdropBlur: { xs: '2px' },

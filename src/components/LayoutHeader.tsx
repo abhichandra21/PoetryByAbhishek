@@ -28,7 +28,7 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-sm bg-paper-light/80 dark:bg-paper-dark/80 border-b border-ink-light/10 dark:border-ink-dark/10">
+    <header className="sticky top-0 z-50 backdrop-blur-sm bg-paper-light/80 dark:bg-paper-dark/80 border-b border-ink-light/10 dark:border-ink-dark/10 shadow-soft">
       <div className="max-w-6xl mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <Link to="/" className="group">

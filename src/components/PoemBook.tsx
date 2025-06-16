@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import PoemPage from './PoemPage.tsx'
 import Navigation from './Navigation.tsx'
 import poems from '../data/poems.json'
+import { trackPoemView } from '../lib/analytics'
 
 const PoemBook = () => {
   const { id } = useParams()
@@ -26,26 +27,58 @@ const PoemBook = () => {
   const [direction, setDirection] = useState(0)
 
   const currentPoem = poemList[currentIndex] || poemList[0]
-  
+
   useEffect(() => {
     if (location.pathname !== '/read') {
       navigate(`/poem/${currentPoem.id}`, { replace: true })
     }
   }, [currentIndex, navigate, location.pathname, currentPoem.id])
-  
-  const goToPrevious = () => {
-    if (currentIndex > 0) {
-      setDirection(-1)
-      setCurrentIndex(currentIndex - 1)
-    }
-  }
 
-  const goToNext = () => {
-    if (currentIndex < poemList.length - 1) {
-      setDirection(1)
-      setCurrentIndex(currentIndex + 1)
+  // Track poem view for simple analytics
+  useEffect(() => {
+    trackPoemView(currentPoem.id)
+  }, [currentPoem.id])
+  
+  const goToPrevious = useCallback(() => {
+    setDirection(-1)
+    setCurrentIndex((idx) => Math.max(0, idx - 1))
+  }, [])
+
+  const goToNext = useCallback(() => {
+    setDirection(1)
+    setCurrentIndex((idx) => Math.min(poemList.length - 1, idx + 1))
+  }, [poemList.length])
+
+  // Swipe support for mobile devices
+  useEffect(() => {
+    let startX = 0
+    let startY = 0
+    const threshold = 50
+
+    const handleStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX
+      startY = e.touches[0].clientY
     }
-  }
+
+    const handleEnd = (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - startX
+      const dy = e.changedTouches[0].clientY - startY
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
+        if (dx < 0) {
+          goToNext()
+        } else {
+          goToPrevious()
+        }
+      }
+    }
+
+    window.addEventListener('touchstart', handleStart)
+    window.addEventListener('touchend', handleEnd)
+    return () => {
+      window.removeEventListener('touchstart', handleStart)
+      window.removeEventListener('touchend', handleEnd)
+    }
+  }, [goToNext, goToPrevious])
   
   const pageVariants = {
     enter: (direction: number) => ({
