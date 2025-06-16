@@ -6,68 +6,73 @@ import ScriptToggle from './ScriptToggle'
 import { useScriptPreference } from './ScriptPreference'
 import poems from '../data/poems.json'
 import type { Poem } from '../types'
-import { trackSearch, getSearchHistory } from '../lib/analytics'
+import { trackSearch } from '../lib/analytics'
+import allTranslations, { romanToDevanagariMap } from '../translations/poemTranslations'
+
+const devToRomanMap: Record<string, string> = {}
+Object.entries(allTranslations).forEach(([dev, val]) => {
+  if ((val as { roman?: string }).roman) {
+    devToRomanMap[dev.toLowerCase()] = (val as { roman: string }).roman.toLowerCase()
+  }
+})
 
 type ViewMode = 'grid' | 'list'
 
 const PoemIndex = () => {
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedTag, setSelectedTag] = useState<string>('')
+  const [activeTag, setActiveTag] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const { script } = useScriptPreference()
   const location = useLocation()
   const navigate = useNavigate()
-  const [suggestions, setSuggestions] = useState<string[]>([])
-
-  const allTags = useMemo(
-    () => [...new Set(poems.flatMap(p => p.tags || []))].sort(),
-    []
-  )
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
     const q = params.get('q') || ''
-    const tag = params.get('tag') || ''
+    const tag = params.get('tag')
     setSearchQuery(q)
-    setSelectedTag(tag)
+    setActiveTag(tag)
   }, [])
 
   useEffect(() => {
     const params = new URLSearchParams()
     if (searchQuery) params.set('q', searchQuery)
-    if (selectedTag) params.set('tag', selectedTag)
+    if (activeTag) params.set('tag', activeTag)
     navigate({ search: params.toString() }, { replace: true })
-    setSuggestions(
-      getSearchHistory().filter((h) =>
-        h.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    )
     if (searchQuery) trackSearch(searchQuery)
-  }, [searchQuery, selectedTag])
+  }, [searchQuery, activeTag])
 
-  // Filter poems based on search query and selected tag
+  // Filter poems based on search query and active tag
   const filteredPoems = useMemo(() => {
     const reversed = [...poems].reverse()
     const query = searchQuery.toLowerCase()
+    const devVariant = romanToDevanagariMap[query]
+    const romanVariant = devToRomanMap[query]
 
     const matchesQuery = (poem: Poem) => {
       if (!query) return true
-      return (
-        poem.title.toLowerCase().includes(query) ||
-        (poem.romanizedTitle && poem.romanizedTitle.toLowerCase().includes(query)) ||
-        poem.lines.some(line => line.toLowerCase().includes(query)) ||
-        (poem.romanizedLines && poem.romanizedLines.some(l => l.toLowerCase().includes(query))) ||
-        (poem.tags && poem.tags.some(tag => tag.toLowerCase().includes(query))) ||
-        (poem.date && poem.date.includes(query))
-      )
+
+      const searchTexts = [
+        poem.title,
+        poem.romanizedTitle ?? '',
+        ...(poem.lines ?? []),
+        ...(poem.romanizedLines ?? []),
+        ...(poem.tags ?? []),
+        poem.date ?? ''
+      ].map(t => t.toLowerCase())
+
+      if (searchTexts.some(t => t.includes(query))) return true
+      if (devVariant && searchTexts.some(t => t.includes(devVariant.toLowerCase()))) return true
+      if (romanVariant && searchTexts.some(t => t.includes(romanVariant.toLowerCase()))) return true
+      return false
     }
 
     return reversed.filter(poem => {
       if (!matchesQuery(poem)) return false
-      if (selectedTag && !(poem.tags || []).includes(selectedTag)) return false
+      if (activeTag && !(poem.tags || []).includes(activeTag)) return false
       return true
     })
-  }, [searchQuery, selectedTag])
+  }, [searchQuery, activeTag])
 
   // Display title based on script preference - with proper type
   const getDisplayTitle = (poem: Poem) => {
@@ -132,39 +137,25 @@ const PoemIndex = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          {suggestions.length > 0 && (
-            <div className="absolute z-10 mt-1 w-full bg-paper-light dark:bg-paper-dark border border-ink-light/10 dark:border-ink-dark/10 rounded-lg shadow-soft">
-              {suggestions.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setSearchQuery(s)}
-                  className="block w-full text-left px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
-        {/* Tag Filter */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setSelectedTag('')}
-            className={`px-3 py-1 rounded-full border text-sm ${selectedTag === '' ? 'bg-accent-light dark:bg-accent-dark text-paper-light dark:text-paper-dark' : 'bg-paper-accent dark:bg-paper-dark-accent text-ink-light dark:text-ink-dark'}`}
-          >
-            All
-          </button>
-          {allTags.map((tag) => (
+        {/* Active Tag Indicator */}
+        {activeTag && (
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-sm text-ink-light-secondary dark:text-ink-dark-secondary">
+              Filtering by tag:
+            </span>
+            <span className="px-3 py-1 text-sm rounded-full bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-secondary dark:text-ink-dark-secondary">
+              {activeTag}
+            </span>
             <button
-              key={tag}
-              onClick={() => setSelectedTag(tag)}
-              className={`px-3 py-1 rounded-full border text-sm ${selectedTag === tag ? 'bg-accent-light dark:bg-accent-dark text-paper-light dark:text-paper-dark' : 'bg-paper-accent dark:bg-paper-dark-accent text-ink-light dark:text-ink-dark'}`}
+              onClick={() => setActiveTag(null)}
+              className="text-sm underline text-accent-light dark:text-accent-dark hover:opacity-75"
             >
-              {tag}
+              Clear
             </button>
-          ))}
-        </div>
+          </div>
+        )}
 
         {/* View Controls */}
         <div className="flex justify-between items-center">
