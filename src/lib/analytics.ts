@@ -1,4 +1,4 @@
-const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'
+const GA_MEASUREMENT_ID = 'G-26SJZ2E3TE'
 
 export const trackPoemView = (id: number) => {
   if (typeof window === 'undefined') return
