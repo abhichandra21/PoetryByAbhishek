@@ -16,8 +16,8 @@ npm install
 if [ ! -f .env.local ]; then
   cat > .env.local <<'EOT'
 # Supabase configuration
-VITE_SUPABASE_URL=your-supabase-url
-VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
 EOT
   echo "Created .env.local with placeholder values. Update it with your Supabase credentials." >&2
 fi
