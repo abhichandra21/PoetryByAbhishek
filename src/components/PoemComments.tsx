@@ -1,5 +1,5 @@
 // src/components/PoemComments.tsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase, type Comment } from '../lib/supabase'
 import { getSessionId } from '../lib/session'
@@ -18,12 +18,7 @@ const PoemComments: React.FC<PoemCommentsProps> = ({ poemId }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Load comments and likes
-  useEffect(() => {
-    fetchCommentsAndLikes()
-  }, [poemId])
-
-  const fetchCommentsAndLikes = async () => {
+  const fetchCommentsAndLikes = useCallback(async () => {
     console.log('Fetching comments for poem:', poemId)
     console.log('Supabase client:', supabase)
     try {
@@ -56,7 +51,11 @@ const PoemComments: React.FC<PoemCommentsProps> = ({ poemId }) => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [poemId])
+
+  useEffect(() => {
+    fetchCommentsAndLikes()
+  }, [poemId, fetchCommentsAndLikes])
 
   // Handle adding a new comment
   const handleSubmit = async (e: React.FormEvent) => {

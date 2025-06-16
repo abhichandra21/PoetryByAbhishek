@@ -18,6 +18,10 @@ const PoemIndex = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const [suggestions, setSuggestions] = useState<string[]>([])
+  const allTags = useMemo(
+    () => [...new Set(poems.flatMap(p => p.tags || []))].sort(),
+    []
+  )
 
 
   useEffect(() => {
@@ -26,7 +30,7 @@ const PoemIndex = () => {
     const tag = params.get('tag') || ''
     setSearchQuery(q)
     setSelectedTag(tag)
-  }, [])
+  }, [location.search])
 
   useEffect(() => {
     const params = new URLSearchParams()
@@ -39,7 +43,7 @@ const PoemIndex = () => {
       )
     )
     if (searchQuery) trackSearch(searchQuery)
-  }, [searchQuery, selectedTag])
+  }, [searchQuery, selectedTag, navigate])
 
   // Filter poems based on search query and selected tag
   const filteredPoems = useMemo(() => {
@@ -143,17 +147,23 @@ const PoemIndex = () => {
           )}
         </div>
 
-        {selectedTag && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm">Tag:</span>
+        {/* Tag Filter Bar */}
+        <div className="flex flex-wrap gap-2">
+          {allTags.map((tag) => (
             <button
-              onClick={() => setSelectedTag('')}
-              className="px-2 py-1 text-sm rounded bg-sage-light/20 dark:bg-sage-dark/20"
+              key={tag}
+              onClick={() => setSelectedTag(tag)}
+              className={`px-2 py-1 text-sm rounded border ${selectedTag === tag ? 'bg-accent-light dark:bg-accent-dark text-paper-light dark:text-paper-dark border-accent-light dark:border-accent-dark' : 'bg-paper-accent dark:bg-paper-dark-accent border-ink-light/20 dark:border-ink-dark/20 hover:border-accent-light dark:hover:border-accent-dark hover:bg-accent-light/10 dark:hover:bg-accent-dark/10'}`}
             >
-              {selectedTag} ×
+              {tag}
             </button>
-          </div>
-        )}
+          ))}
+          {selectedTag && (
+            <button onClick={() => setSelectedTag('')} className="text-sm underline ml-2">
+              Clear
+            </button>
+          )}
+        </div>
 
         {/* View Controls */}
         <div className="flex justify-between items-center">
