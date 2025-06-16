@@ -26,107 +26,37 @@ const AuthorBio = () => {
             Abhishek Chandra/अभिषेक चन्द्रा
           </h1>
           <p className="text-ink-light-secondary dark:text-ink-dark-secondary">
-            Poet & Writer
+            Poet & Software Engineer
           </p>
         </motion.div>
 
         {/* Main Content */}
         <div className="space-y-8">
-          {/* Biography */}
           <motion.section variants={fadeInUp} transition={{ delay: 0.2 }}>
-            <h2 className="text-xl font-bold text-ink-light dark:text-ink-dark mb-4">
-              Biography
-            </h2>
-            <div className="prose dark:prose-invert max-w-none">
-              <p className="text-ink-light-secondary dark:text-ink-dark-secondary leading-relaxed">
-              Abhishek Chandra is a poet whose work bridges continents and languages, 
-              weaving together the delicate threads of memory, longing, and human connection.
-              Born in India and now residing in Milwaukee, his Hindi and Urdu verses explore 
-              the spaces between past and present, silence and expression, absence and belonging.
+            <div className="prose dark:prose-invert max-w-none space-y-4">
+              <h2>About Abhishek Chandra</h2>
+              <p>
+                Hi, I’m Abhishek — a poet and software engineer, born in India and now living in Milwaukee. I write mostly in Hindi and Urdu, trying to capture the quiet, in-between moments of life — memories, relationships, and the feelings that are hard to put into words.
               </p>
-              <p className="text-ink-light-secondary dark:text-ink-dark-secondary leading-relaxed mt-4">
-              Alongside his career as a software engineer, 
-              Abhishek captures the world both in words and through the lens of his camera,
-              seeking to reveal the poetry that lingers quietly in the everyday. 
-              His work invites readers to pause, reflect, and find meaning in the tender intersections of life’s fleeting moments.
+              <p>
+                Poetry has been with me since my school days. It’s something I turn to when I need to slow down, reflect, or reconnect with myself. A way of noticing the world more closely, whether in a passing thought or a changing sky.
+              </p>
+              <p>
+                I’m deeply inspired by nature, the old masters of Hindi literature, and everyday conversations. When I’m not writing, you’ll usually find me with a camera in hand, chasing light and stillness.
+              </p>
+              <p>
+                If you ever want to talk poetry, share something, or just say hello, I’d love to hear from you.
               </p>
             </div>
           </motion.section>
 
-          {/* Literary Journey */}
           <motion.section variants={fadeInUp} transition={{ delay: 0.3 }}>
-            <h2 className="text-xl font-bold text-ink-light dark:text-ink-dark mb-4">
-              Literary Journey
-            </h2>
-            <div className="space-y-3">
-              <div className="flex gap-3 items-start">
-                <div className="w-2 h-2 rounded-full bg-accent-light dark:bg-accent-dark mt-2 flex-shrink-0" />
-                <p className="text-ink-light-secondary dark:text-ink-dark-secondary">
-                  Started writing poetry during school years, drawn to the expressive power of Hindi verse
-                </p>
-              </div>
-              <div className="flex gap-3 items-start">
-                <div className="w-2 h-2 rounded-full bg-accent-light dark:bg-accent-dark mt-2 flex-shrink-0" />
-                <p className="text-ink-light-secondary dark:text-ink-dark-secondary">
-                  Focuses on themes of nature, relationships, nostalgia, and philosophical reflection
-                </p>
-              </div>
-            </div>
-          </motion.section>
-
-          {/* Influences */}
-          <motion.section variants={fadeInUp} transition={{ delay: 0.4 }}>
-            <h2 className="text-xl font-bold text-ink-light dark:text-ink-dark mb-4">
-              Influences & Inspirations
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-paper-accent dark:bg-paper-dark-accent p-4 rounded-lg">
-                <h3 className="font-medium text-ink-light dark:text-ink-dark mb-2">
-                  Literary Influences
-                </h3>
-                <p className="text-sm text-ink-light-secondary dark:text-ink-dark-secondary">
-                  Premchand, Nirala, Bachan, and other masters of Hindi literature who explored 
-                  social themes and human emotions
-                </p>
-              </div>
-              <div className="bg-paper-accent dark:bg-paper-dark-accent p-4 rounded-lg">
-                <h3 className="font-medium text-ink-light dark:text-ink-dark mb-2">
-                  Natural Inspirations
-                </h3>
-                <p className="text-sm text-ink-light-secondary dark:text-ink-dark-secondary">
-                Writing in Hindi and Urdu, Abhishek captures moments where nature and emotion intertwine,
-                offering readers a gentle invitation to pause, reflect, and rediscover wonder in the everyday.
-                </p>
-              </div>
-            </div>
-          </motion.section>
-
-          {/* Personal Philosophy */}
-          <motion.section variants={fadeInUp} transition={{ delay: 0.5 }}>
-            <h2 className="text-xl font-bold text-ink-light dark:text-ink-dark mb-4">
-              Personal Philosophy
-            </h2>
-            <blockquote className="border-l-4 border-accent-light dark:border-accent-dark pl-4 italic">
-              <p className="text-ink-light-secondary dark:text-ink-dark-secondary leading-relaxed">
-                "Poetry is the bridge between the seen and the unseen, the said and the unsaid. 
-                In our rushed lives, it offers moments of pause, reflection, and connection with 
-                our deeper selves and the world around us."
-              </p>
-            </blockquote>
-          </motion.section>
-
-          {/* Contact Information */}
-          <motion.section variants={fadeInUp} transition={{ delay: 0.6 }}>
             <h2 className="text-xl font-bold text-ink-light dark:text-ink-dark mb-4">
               Connect
             </h2>
-            <p className="text-ink-light-secondary dark:text-ink-dark-secondary mb-4">
-              For poetry readings, collaborations, or simply to share thoughts about poetry, 
-              feel free to reach out:
-            </p>
             <div className="flex flex-wrap gap-4">
-              <a 
-                href="mailto:abhi.chandra@gmail.com" 
+              <a
+                href="mailto:abhi.chandra@gmail.com"
                 className="flex items-center gap-2 px-4 py-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
