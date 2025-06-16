@@ -1,11 +1,12 @@
 // src/components/PoemIndex.tsx
-import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import ScriptToggle from './ScriptToggle'
 import { useScriptPreference } from './ScriptPreference'
 import poems from '../data/poems.json'
 import type { Poem } from '../types'
+import { trackSearch, getSearchHistory } from '../lib/analytics'
 
 type ViewMode = 'grid' | 'list'
 
@@ -14,11 +15,31 @@ const PoemIndex = () => {
   const [selectedTag, setSelectedTag] = useState<string>('')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const { script } = useScriptPreference()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [suggestions, setSuggestions] = useState<string[]>([])
 
-  const allTags = useMemo(
-    () => [...new Set(poems.flatMap(p => p.tags || []))].sort(),
-    []
-  )
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const q = params.get('q') || ''
+    const tag = params.get('tag') || ''
+    setSearchQuery(q)
+    setSelectedTag(tag)
+  }, [])
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (searchQuery) params.set('q', searchQuery)
+    if (selectedTag) params.set('tag', selectedTag)
+    navigate({ search: params.toString() }, { replace: true })
+    setSuggestions(
+      getSearchHistory().filter((h) =>
+        h.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    )
+    if (searchQuery) trackSearch(searchQuery)
+  }, [searchQuery, selectedTag])
 
   // Filter poems based on search query and selected tag
   const filteredPoems = useMemo(() => {
@@ -107,23 +128,32 @@ const PoemIndex = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
+          {suggestions.length > 0 && (
+            <div className="absolute z-10 mt-1 w-full bg-paper-light dark:bg-paper-dark border border-ink-light/10 dark:border-ink-dark/10 rounded-lg shadow-soft">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSearchQuery(s)}
+                  className="block w-full text-left px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Tag Filter */}
-        <div>
-          <select
-            value={selectedTag}
-            onChange={(e) => setSelectedTag(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg bg-paper-accent dark:bg-paper-dark-accent border border-ink-light/10 dark:border-ink-dark/10 focus:border-accent-light dark:focus:border-accent-dark outline-none transition-colors"
-          >
-            <option value="">All tags</option>
-            {allTags.map((tag) => (
-              <option key={tag} value={tag}>
-                {tag}
-              </option>
-            ))}
-          </select>
-        </div>
+        {selectedTag && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm">Tag:</span>
+            <button
+              onClick={() => setSelectedTag('')}
+              className="px-2 py-1 text-sm rounded bg-sage-light/20 dark:bg-sage-dark/20"
+            >
+              {selectedTag} ×
+            </button>
+          </div>
+        )}
 
         {/* View Controls */}
         <div className="flex justify-between items-center">
@@ -188,12 +218,13 @@ const PoemIndex = () => {
                   {poem.tags && poem.tags.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-1">
                       {poem.tags.slice(0, 3).map((tag, index) => (
-                        <span
+                        <button
                           key={index}
-                          className="text-xs px-2 py-0.5 rounded bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-tertiary dark:text-ink-dark-tertiary"
+                          onClick={() => setSelectedTag(tag)}
+                          className={`text-xs px-2 py-0.5 rounded bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-tertiary dark:text-ink-dark-tertiary ${selectedTag === tag ? 'underline' : ''}`}
                         >
                           {tag}
-                        </span>
+                        </button>
                       ))}
                       {poem.tags.length > 3 && (
                         <span className="text-xs px-2 py-0.5 rounded bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-tertiary dark:text-ink-dark-tertiary">
