@@ -145,7 +145,7 @@ const PoemLike: React.FC<PoemLikeProps> = ({ poemId, className = '' }) => {
         whileTap={{ scale: 0.95 }}
         onClick={handleLike}
         disabled={isUpdating}
-        className={`relative p-2 rounded-full transition-all duration-300 border ${
+        className={`relative p-2 rounded-full transition-all duration-300 border w-11 h-11 flex items-center justify-center tap-target ${
           isLiked
             ? 'bg-accent-light dark:bg-accent-dark text-paper-light dark:text-paper-dark border-accent-light dark:border-accent-dark'
             : 'bg-paper-accent dark:bg-paper-dark-accent border-ink-light/20 dark:border-ink-dark/20 hover:border-accent-light dark:hover:border-accent-dark hover:bg-accent-light/10 dark:hover:bg-accent-dark/10'

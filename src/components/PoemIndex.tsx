@@ -1,29 +1,76 @@
 // src/components/PoemIndex.tsx
-import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import ScriptToggle from './ScriptToggle'
 import { useScriptPreference } from './ScriptPreference'
 import poems from '../data/poems.json'
 import type { Poem } from '../types'
+import allTranslations, { romanToDevanagariMap } from '../translations/poemTranslations'
+
+const devToRomanMap: Record<string, string> = {}
+Object.entries(allTranslations).forEach(([dev, val]) => {
+  if ((val as { roman?: string }).roman) {
+    devToRomanMap[dev.toLowerCase()] = (val as { roman: string }).roman.toLowerCase()
+  }
+})
 
 type ViewMode = 'grid' | 'list'
 
 const PoemIndex = () => {
   const [searchQuery, setSearchQuery] = useState('')
+  const [activeTag, setActiveTag] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const { script } = useScriptPreference()
+  const location = useLocation()
+  const navigate = useNavigate()
 
-  // Filter poems based on search query
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const q = params.get('q') || ''
+    const tag = params.get('tag')
+    setSearchQuery(q)
+    setActiveTag(tag)
+  }, [])
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (searchQuery) params.set('q', searchQuery)
+    if (activeTag) params.set('tag', activeTag)
+    navigate({ search: params.toString() }, { replace: true })
+  }, [searchQuery, activeTag])
+
+  // Filter poems based on search query and active tag
   const filteredPoems = useMemo(() => {
     const reversed = [...poems].reverse()
-    if (!searchQuery) return reversed
+    const query = searchQuery.toLowerCase()
+    const devVariant = romanToDevanagariMap[query]
+    const romanVariant = devToRomanMap[query]
 
-    return reversed.filter(poem =>
-      poem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      poem.lines.some(line => line.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
-  }, [searchQuery])
+    const matchesQuery = (poem: Poem) => {
+      if (!query) return true
+
+      const searchTexts = [
+        poem.title,
+        poem.romanizedTitle ?? '',
+        ...(poem.lines ?? []),
+        ...(poem.romanizedLines ?? []),
+        ...(poem.tags ?? []),
+        poem.date ?? ''
+      ].map(t => t.toLowerCase())
+
+      if (searchTexts.some(t => t.includes(query))) return true
+      if (devVariant && searchTexts.some(t => t.includes(devVariant.toLowerCase()))) return true
+      if (romanVariant && searchTexts.some(t => t.includes(romanVariant.toLowerCase()))) return true
+      return false
+    }
+
+    return reversed.filter(poem => {
+      if (!matchesQuery(poem)) return false
+      if (activeTag && !(poem.tags || []).includes(activeTag)) return false
+      return true
+    })
+  }, [searchQuery, activeTag])
 
   // Display title based on script preference - with proper type
   const getDisplayTitle = (poem: Poem) => {
@@ -63,7 +110,7 @@ const PoemIndex = () => {
       >
         <h1 className="text-3xl font-bold text-center hindi mb-2">कविता संग्रह</h1>
         <p className="text-center text-ink-light-secondary dark:text-ink-dark-secondary">
-          Browse the complete collection of poems
+          Browse Abhishek's complete collection of poems
         </p>
       </motion.div>
 
@@ -88,7 +135,10 @@ const PoemIndex = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
+          {/* no search history suggestions */}
         </div>
+
+        {/* Tag filter removed */}
 
         {/* View Controls */}
         <div className="flex justify-between items-center">
@@ -101,7 +151,7 @@ const PoemIndex = () => {
             
             <button
               onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-              className="p-2 rounded bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors"
+              className="p-2 rounded bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors w-11 h-11 flex items-center justify-center tap-target"
               aria-label={`Switch to ${viewMode === 'grid' ? 'list' : 'grid'} view`}
             >
               {viewMode === 'grid' ? (
@@ -128,7 +178,7 @@ const PoemIndex = () => {
         {filteredPoems.map((poem) => (
           <motion.div key={poem.id} variants={itemVariants}>
             <Link to={`/poem/${poem.id}`} className="block">
-              <div className={`p-6 rounded-lg bg-paper-light dark:bg-paper-dark shadow-medium hover:shadow-lg transition-all duration-200 border border-ink-light/10 dark:border-ink-dark/10 hover:border-accent-light dark:hover:border-accent-dark ${
+              <div className={`p-6 rounded-lg bg-paper-light dark:bg-paper-dark shadow-soft hover:shadow-deep transition-all duration-300 transform hover:-translate-y-1 border border-ink-light/10 dark:border-ink-dark/10 hover:border-accent-light dark:hover:border-accent-dark ${
                 viewMode === 'list' ? 'flex gap-6' : ''
               }`}>
                 {/* Poem Number Circle */}
@@ -149,24 +199,7 @@ const PoemIndex = () => {
                     {script === 'roman' && poem.romanizedLines ? poem.romanizedLines[0] : poem.lines[0]}
                   </p>
 
-                  {/* Tags */}
-                  {poem.tags && poem.tags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-1">
-                      {poem.tags.slice(0, 3).map((tag, index) => (
-                        <span
-                          key={index}
-                          className="text-xs px-2 py-0.5 rounded bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-tertiary dark:text-ink-dark-tertiary"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                      {poem.tags.length > 3 && (
-                        <span className="text-xs px-2 py-0.5 rounded bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-tertiary dark:text-ink-dark-tertiary">
-                          +{poem.tags.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  {/* tags removed on index */}
                 </div>
 
                 {/* Arrow */}

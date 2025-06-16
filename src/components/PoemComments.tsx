@@ -24,8 +24,6 @@ const PoemComments: React.FC<PoemCommentsProps> = ({ poemId }) => {
   }, [poemId])
 
   const fetchCommentsAndLikes = async () => {
-    console.log('Fetching comments for poem:', poemId)
-    console.log('Supabase client:', supabase)
     try {
       setLoading(true)
       setError(null)

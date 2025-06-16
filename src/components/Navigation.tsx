@@ -74,7 +74,7 @@ const Navigation: FC<NavigationProps> = ({
         whileTap={hasPrevious ? "tap" : ""}
         onClick={onPrevious}
         disabled={!hasPrevious}
-        className={`group flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+        className={`group flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 tap-target ${
           hasPrevious
             ? 'bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 text-ink-light dark:text-ink-dark'
             : 'bg-ink-light/5 dark:bg-ink-dark/5 text-ink-light-tertiary dark:text-ink-dark-tertiary cursor-not-allowed'
@@ -107,7 +107,7 @@ const Navigation: FC<NavigationProps> = ({
         whileTap={hasNext ? "tap" : ""}
         onClick={onNext}
         disabled={!hasNext}
-        className={`group flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+        className={`group flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 tap-target ${
           hasNext
             ? 'bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 text-ink-light dark:text-ink-dark'
             : 'bg-ink-light/5 dark:bg-ink-dark/5 text-ink-light-tertiary dark:text-ink-dark-tertiary cursor-not-allowed'

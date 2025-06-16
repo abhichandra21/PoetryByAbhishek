@@ -14,6 +14,7 @@ import { useScriptPreference } from './ScriptPreference';
 import PoemComments from './PoemComments';
 import PoemLike from './PoemLike'; // Add this import
 import TranslationTooltip from './TranslationTooltip';
+import { Link } from 'react-router-dom';
 import allPoemTranslations, { romanToDevanagariMap } from '../translations/poemTranslations';
 
 interface PoemPageProps {
@@ -239,7 +240,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
           <div className="relative">
             <button
               onClick={() => setShowShareMenu(!showShareMenu)}
-              className="p-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors"
+              className="p-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors w-11 h-11 flex items-center justify-center tap-target"
               aria-label="Share poem"
               aria-haspopup="menu"
               aria-expanded={showShareMenu}
@@ -266,7 +267,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
                   <button
                     key={p}
                     onClick={() => handleShare(p)}
-                    className="w-full px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 text-left"
+                    className="w-full px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 text-left tap-target"
                     role="menuitem"
                   >
                     {p.charAt(0).toUpperCase() + p.slice(1)}
@@ -275,7 +276,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
                 {canNativeShare && (
                   <button
                     onClick={() => handleShare('native')}
-                    className="w-full px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 text-left"
+                    className="w-full px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 text-left tap-target"
                     role="menuitem"
                   >
                     More…
@@ -341,12 +342,13 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
           >
             <div className="flex flex-wrap gap-2">
               {poem.tags.map((tag) => (
-                <span
+                <Link
                   key={tag}
-                  className="px-3 py-1 text-xs rounded-full bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-secondary dark:text-ink-dark-secondary border border-sage-light/20 dark:border-sage-dark/20"
+                  to={`/?tag=${encodeURIComponent(tag)}`}
+                  className="px-3 py-1 text-xs rounded-full bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-secondary dark:text-ink-dark-secondary border border-sage-light/20 dark:border-sage-dark/20 hover:bg-accent-light/20 dark:hover:bg-accent-dark/20"
                 >
                   {tag}
-                </span>
+                </Link>
               ))}
             </div>
           </motion.div>

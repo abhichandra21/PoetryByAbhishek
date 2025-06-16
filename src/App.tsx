@@ -1,6 +1,6 @@
 // src/App.tsx
 
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import LayoutHeader from './components/LayoutHeader.tsx'
@@ -11,9 +11,12 @@ import AuthorBio from './components/AuthorBio.tsx'
 import Contact from './components/Contact.tsx'
 import Subscribe from './components/Subscribe.tsx'
 import NotFound from './components/NotFound.tsx'
+import Subscribe from './components/Subscribe.tsx'
+import { trackPageView } from './lib/analytics'
 // import DebugEnv from './components/DebugEnv'
 
 function App() {
+  const location = useLocation()
   const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem('darkMode')
     return savedMode ? JSON.parse(savedMode) : false
@@ -38,6 +41,11 @@ function App() {
     const timer = setTimeout(() => setIsLoading(false), 100)
     return () => clearTimeout(timer)
   }, [])
+
+  // Track page views
+  useEffect(() => {
+    trackPageView(location.pathname)
+  }, [location.pathname])
 
   if (isLoading) {
     return (
