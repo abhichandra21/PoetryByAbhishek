@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import PoemPage from './PoemPage.tsx'
@@ -39,19 +39,19 @@ const PoemBook = () => {
     trackPoemView(currentPoem.id)
   }, [currentPoem.id])
   
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     if (currentIndex > 0) {
       setDirection(-1)
       setCurrentIndex(currentIndex - 1)
     }
-  }
+  }, [currentIndex])
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     if (currentIndex < poemList.length - 1) {
       setDirection(1)
       setCurrentIndex(currentIndex + 1)
     }
-  }
+  }, [currentIndex, poemList.length])
 
   // Swipe support for mobile devices
   useEffect(() => {
@@ -82,7 +82,7 @@ const PoemBook = () => {
       window.removeEventListener('touchstart', handleStart)
       window.removeEventListener('touchend', handleEnd)
     }
-  }, [currentIndex])
+  }, [currentIndex, goToNext, goToPrevious])
   
   const pageVariants = {
     enter: (direction: number) => ({

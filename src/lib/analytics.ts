@@ -30,3 +30,22 @@ export const trackPageView = (path: string) => {
     })
   }
 }
+
+export const trackSearch = (query: string) => {
+  if (typeof window === 'undefined' || !query) return
+  const history = JSON.parse(localStorage.getItem('searchHistory') || '[]') as string[]
+  const existingIndex = history.indexOf(query)
+  if (existingIndex !== -1) history.splice(existingIndex, 1)
+  history.unshift(query)
+  if (history.length > 10) history.pop()
+  localStorage.setItem('searchHistory', JSON.stringify(history))
+  const w = window as unknown as { gtag?: (...args: unknown[]) => void }
+  if (w.gtag) {
+    w.gtag('event', 'search', { search_term: query })
+  }
+}
+
+export const getSearchHistory = (): string[] => {
+  if (typeof window === 'undefined') return []
+  return JSON.parse(localStorage.getItem('searchHistory') || '[]') as string[]
+}

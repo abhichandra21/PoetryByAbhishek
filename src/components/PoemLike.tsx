@@ -1,5 +1,5 @@
 // src/components/PoemLike.tsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { getSessionId } from '../lib/session'
@@ -16,11 +16,7 @@ const PoemLike: React.FC<PoemLikeProps> = ({ poemId, className = '' }) => {
   const [isUpdating, setIsUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchLikeData()
-  }, [poemId])
-
-  const fetchLikeData = async () => {
+  const fetchLikeData = useCallback(async () => {
     try {
       setIsLoading(true)
       setError(null)
@@ -61,7 +57,11 @@ const PoemLike: React.FC<PoemLikeProps> = ({ poemId, className = '' }) => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [poemId])
+
+  useEffect(() => {
+    fetchLikeData()
+  }, [poemId, fetchLikeData])
 
   const handleLike = async () => {
     if (isUpdating) return
