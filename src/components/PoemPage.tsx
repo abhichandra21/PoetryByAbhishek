@@ -7,6 +7,7 @@ import {
   useCallback,
   useRef,
 } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { Poem } from '../types';
 import ScriptToggle from './ScriptToggle';
@@ -341,12 +342,13 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
           >
             <div className="flex flex-wrap gap-2">
               {poem.tags.map((tag) => (
-                <span
+                <Link
                   key={tag}
-                  className="px-3 py-1 text-xs rounded-full bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-secondary dark:text-ink-dark-secondary border border-sage-light/20 dark:border-sage-dark/20"
+                  to={`/?tag=${encodeURIComponent(tag)}`}
+                  className="px-3 py-1 text-xs rounded-full bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-secondary dark:text-ink-dark-secondary border border-sage-light/20 dark:border-sage-dark/20 hover:bg-accent-light/20 dark:hover:bg-accent-dark/20"
                 >
                   {tag}
-                </span>
+                </Link>
               ))}
             </div>
           </motion.div>
