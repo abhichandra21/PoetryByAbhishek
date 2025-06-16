@@ -1,46 +1,49 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom' // Add useLocation
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import PoemPage from './PoemPage.tsx'
 import Navigation from './Navigation.tsx'
-import poems from '../data/poems.json'  
+import poems from '../data/poems.json'
 
 const PoemBook = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const location = useLocation() // Add this
-  
-  const [currentPoemId, setCurrentPoemId] = useState(() => {
-    // If coming from /read route, default to the first poem
-    if (location.pathname === '/read') {
-      return 1
+  const location = useLocation()
+
+  const poemList = [...poems].reverse()
+
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    if (location.pathname === '/read') return 0
+
+    if (id) {
+      const idx = poemList.findIndex(p => p.id === parseInt(id))
+      if (idx !== -1) return idx
     }
-    // Otherwise use the ID from URL params or default to 1
-    return id ? parseInt(id) : 1
+
+    return 0
   })
   
   const [direction, setDirection] = useState(0)
-  
-  const currentPoem = poems.find(poem => poem.id === currentPoemId) || poems[0]
+
+  const currentPoem = poemList[currentIndex] || poemList[0]
   
   useEffect(() => {
-    // Don't replace the URL if we're on the /read path
     if (location.pathname !== '/read') {
-      navigate(`/poem/${currentPoemId}`, { replace: true })
+      navigate(`/poem/${currentPoem.id}`, { replace: true })
     }
-  }, [currentPoemId, navigate, location.pathname])
+  }, [currentIndex, navigate, location.pathname, currentPoem.id])
   
   const goToPrevious = () => {
-    if (currentPoemId > 1) {
+    if (currentIndex > 0) {
       setDirection(-1)
-      setCurrentPoemId(currentPoemId - 1)
+      setCurrentIndex(currentIndex - 1)
     }
   }
-  
+
   const goToNext = () => {
-    if (currentPoemId < poems.length) {
+    if (currentIndex < poemList.length - 1) {
       setDirection(1)
-      setCurrentPoemId(currentPoemId + 1)
+      setCurrentIndex(currentIndex + 1)
     }
   }
   
@@ -76,7 +79,7 @@ const PoemBook = () => {
       <div className="relative" style={{ perspective: '1000px' }}>
         <AnimatePresence initial={false} mode="wait" custom={direction}>
           <motion.div
-            key={currentPoemId}
+            key={currentPoem.id}
             custom={direction}
             variants={pageVariants}
             initial="enter"
@@ -90,13 +93,13 @@ const PoemBook = () => {
         </AnimatePresence>
       </div>
       
-      <Navigation 
+      <Navigation
         onPrevious={goToPrevious}
         onNext={goToNext}
-        hasPrevious={currentPoemId > 1}
-        hasNext={currentPoemId < poems.length}
-        currentPage={currentPoemId}
-        totalPages={poems.length}
+        hasPrevious={currentIndex > 0}
+        hasNext={currentIndex < poemList.length - 1}
+        currentPage={currentIndex + 1}
+        totalPages={poemList.length}
       />
       
       {/* Keyboard hint */}
