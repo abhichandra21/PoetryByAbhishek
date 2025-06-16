@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom' // Add useLocation
 import { motion, AnimatePresence } from 'framer-motion'
-import PoemPage from './PoemPage.js'  
-import Navigation from './Navigation.js'
+import PoemPage from './PoemPage.tsx'
+import Navigation from './Navigation.tsx'
 import poems from '../data/poems.json'  
 
 const PoemBook = () => {
