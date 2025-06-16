@@ -26,19 +26,3 @@ export interface Like {
   session_id: string
   created_at: string
 }
-
-/*
-  // Add this to src/lib/supabase.ts temporarily for debugging
-  console.log('Environment check:')
-  console.log('NODE_ENV:', import.meta.env.MODE)
-  console.log('VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL)
-  console.log('VITE_SUPABASE_ANON_KEY exists:', !!import.meta.env.VITE_SUPABASE_ANON_KEY)
-  console.log('All env vars:', import.meta.env)
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Missing Supabase environment variables:')
-    console.error('URL:', supabaseUrl)
-    console.error('Key exists:', !!supabaseAnonKey)
-    throw new Error('Missing Supabase environment variables')
-  }
-*/

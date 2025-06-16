@@ -110,7 +110,7 @@ const PoemIndex = () => {
       >
         <h1 className="text-3xl font-bold text-center hindi mb-2">कविता संग्रह</h1>
         <p className="text-center text-ink-light-secondary dark:text-ink-dark-secondary">
-          Browse the complete collection of poems
+          Browse Abhishek's complete collection of poems
         </p>
       </motion.div>
 

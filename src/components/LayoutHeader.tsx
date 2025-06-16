@@ -21,8 +21,8 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
   }
 
   const navItems = [
-    { path: '/read', label: 'Read', labelHindi: 'पढ़ें' },
     { path: '/', label: 'Index', labelHindi: 'सूची' },
+    { path: '/read', label: 'Read', labelHindi: 'पढ़ें' },
     { path: '/about', label: 'About', labelHindi: 'परिचय' },
     { path: '/contact', label: 'Contact', labelHindi: 'संपर्क' },
   ];
