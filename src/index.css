@@ -77,6 +77,15 @@
     @apply ring-offset-2 ring-offset-paper-light dark:ring-offset-paper-dark;
     border-radius: 0.125rem;
   }
+
+  /* Ensure tap targets are large enough on touch devices */
+  button,
+  [role="button"],
+  .tap-target {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
   
   @media (prefers-reduced-motion: reduce) {
     html {
