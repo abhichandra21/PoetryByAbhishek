@@ -24,21 +24,32 @@ const Contact = () => {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Helper to convert the form data into a URL encoded string that Netlify
+  // can understand when posting to the static endpoint.
+  const encode = (data: Record<string, string>) =>
+    Object.keys(data)
+      .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+      .join('&')
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
+
     try {
-      // Here you would typically send the form data to your backend
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      // Send the form data to Netlify's serverless forms endpoint
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encode({ 'form-name': 'contact', ...formData })
+      })
+
       setSubmitStatus('success')
       setFormData({ name: '', email: '', subject: '', message: '' })
-      
-      // Reset status after 3 seconds
+
+      // Reset status after displaying the success message
       setTimeout(() => setSubmitStatus('idle'), 3000)
     } catch (error) {
+      console.error(error)
       setSubmitStatus('error')
       setTimeout(() => setSubmitStatus('idle'), 3000)
     } finally {
@@ -134,10 +145,19 @@ const Contact = () => {
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-4"
-              name="contact" // Add this name
-              method="POST" // Use POST
-              data-netlify="true" // This is the magic attribute
+              name="contact"
+              method="POST"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
             >
+              {/* Hidden input required for Netlify */}
+              <input type="hidden" name="form-name" value="contact" />
+              <p className="hidden">
+                <label>
+                  Don’t fill this out if you're human:
+                  <input name="bot-field" onChange={handleChange} />
+                </label>
+              </p>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-ink-light dark:text-ink-dark mb-1">
                   Name
