@@ -11,19 +11,38 @@ type ViewMode = 'grid' | 'list'
 
 const PoemIndex = () => {
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedTag, setSelectedTag] = useState<string>('')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const { script } = useScriptPreference()
 
-  // Filter poems based on search query
+  const allTags = useMemo(
+    () => [...new Set(poems.flatMap(p => p.tags || []))].sort(),
+    []
+  )
+
+  // Filter poems based on search query and selected tag
   const filteredPoems = useMemo(() => {
     const reversed = [...poems].reverse()
-    if (!searchQuery) return reversed
+    const query = searchQuery.toLowerCase()
 
-    return reversed.filter(poem =>
-      poem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      poem.lines.some(line => line.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
-  }, [searchQuery])
+    const matchesQuery = (poem: Poem) => {
+      if (!query) return true
+      return (
+        poem.title.toLowerCase().includes(query) ||
+        (poem.romanizedTitle && poem.romanizedTitle.toLowerCase().includes(query)) ||
+        poem.lines.some(line => line.toLowerCase().includes(query)) ||
+        (poem.romanizedLines && poem.romanizedLines.some(l => l.toLowerCase().includes(query))) ||
+        (poem.tags && poem.tags.some(tag => tag.toLowerCase().includes(query))) ||
+        (poem.date && poem.date.includes(query))
+      )
+    }
+
+    return reversed.filter(poem => {
+      if (!matchesQuery(poem)) return false
+      if (selectedTag && !(poem.tags || []).includes(selectedTag)) return false
+      return true
+    })
+  }, [searchQuery, selectedTag])
 
   // Display title based on script preference - with proper type
   const getDisplayTitle = (poem: Poem) => {
@@ -90,6 +109,22 @@ const PoemIndex = () => {
           </div>
         </div>
 
+        {/* Tag Filter */}
+        <div>
+          <select
+            value={selectedTag}
+            onChange={(e) => setSelectedTag(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg bg-paper-accent dark:bg-paper-dark-accent border border-ink-light/10 dark:border-ink-dark/10 focus:border-accent-light dark:focus:border-accent-dark outline-none transition-colors"
+          >
+            <option value="">All tags</option>
+            {allTags.map((tag) => (
+              <option key={tag} value={tag}>
+                {tag}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* View Controls */}
         <div className="flex justify-between items-center">
           <ScriptToggle /> {/* Add the script toggle here */}
@@ -128,7 +163,7 @@ const PoemIndex = () => {
         {filteredPoems.map((poem) => (
           <motion.div key={poem.id} variants={itemVariants}>
             <Link to={`/poem/${poem.id}`} className="block">
-              <div className={`p-6 rounded-lg bg-paper-light dark:bg-paper-dark shadow-medium hover:shadow-lg transition-all duration-200 border border-ink-light/10 dark:border-ink-dark/10 hover:border-accent-light dark:hover:border-accent-dark ${
+              <div className={`p-6 rounded-lg bg-paper-light dark:bg-paper-dark shadow-soft hover:shadow-deep transition-all duration-300 transform hover:-translate-y-1 border border-ink-light/10 dark:border-ink-dark/10 hover:border-accent-light dark:hover:border-accent-dark ${
                 viewMode === 'list' ? 'flex gap-6' : ''
               }`}>
                 {/* Poem Number Circle */}
