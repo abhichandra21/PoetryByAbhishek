@@ -47,7 +47,7 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "चराग़-ए-उम्मीद": { meaning: "lamp of hope", roman: "charaag-e-ummiid" },
     "आँधियों": { meaning: "storms", roman: "aandhiyon" },
     "ख्वाहिशों": { meaning: "desires", roman: "khvaahishon" },
-    "जान-ओ-दौलat": { meaning: "life and wealth", roman: "jaan-o-daulat" },
+    "जान-ओ-दौलत": { meaning: "life and wealth", roman: "jaan-o-daulat" },
     "कूचा": { meaning: "street, lane", roman: "koochaa" },
     "रहगुज़र": { meaning: "path, way, road", roman: "rahaguzar" },
     "जानिब": { meaning: "towards, in the direction of", roman: "jaanib" },
