@@ -45,7 +45,15 @@
       "dil duniyaan kii baaten sau aur unamen guzrii raaten sau",
       "dil duniyaan kii baaton men ham, sapane roz sajaate sau"
     ],
-    "tags": ["memories", "life journey", "nostalgia", "emotions", "dreams", "nature metaphors"]
+    "tags": [
+      "memories",
+      "life journey",
+      "nostalgia",
+      "emotions",
+      "dreams",
+      "nature metaphors"
+    ],
+    "date": "2024-01-01"
   },
   {
     "id": 2,
@@ -83,7 +91,15 @@
       "jiitaa hii rahaa, saansen ginate, haanthon men zanjiiren Daale",
       "chalanaa naa chaahen kadam agar, to phir raah dikhaae kaun"
     ],
-    "tags": ["loneliness", "existential questions", "solitude", "unfulfilled desires", "silence", "philosophical"]
+    "tags": [
+      "loneliness",
+      "existential questions",
+      "solitude",
+      "unfulfilled desires",
+      "silence",
+      "philosophical"
+    ],
+    "date": "2024-02-01"
   },
   {
     "id": 3,
@@ -123,7 +139,15 @@
       "ek lamhaa mujhe aur mil jaae isii ummiid main",
       "faasale jo daramyaan hain, todane kaa man kiyaa"
     ],
-    "tags": ["family bonds", "sisterly love", "childhood memories", "distance", "hope", "communication"]
+    "tags": [
+      "family bonds",
+      "sisterly love",
+      "childhood memories",
+      "distance",
+      "hope",
+      "communication"
+    ],
+    "date": "2024-03-01"
   },
   {
     "id": 4,
@@ -181,7 +205,16 @@
       "kab tak terii yaad se jii manaaen,",
       "mujhe bas terii ek, khabar laa ke de do"
     ],
-    "tags": ["ghazal", "urdu poetry", "longing", "companionship", "home", "hope", "divine plea"]
+    "tags": [
+      "ghazal",
+      "urdu poetry",
+      "longing",
+      "companionship",
+      "home",
+      "hope",
+      "divine plea"
+    ],
+    "date": "2024-04-01"
   },
   {
     "id": 5,
@@ -221,7 +254,15 @@
       "magar ek tiis rahatii hai, kuchh dam tod jaataa hai,",
       "mujhe ghar yaad aataa hai"
     ],
-    "tags": ["homesickness", "migration", "family", "roots", "melancholy", "displacement"]
+    "tags": [
+      "homesickness",
+      "migration",
+      "family",
+      "roots",
+      "melancholy",
+      "displacement"
+    ],
+    "date": "2024-05-01"
   },
   {
     "id": 6,
@@ -271,7 +312,16 @@
       "bas itanaa hiin kaafii hai, saansen chal rahii hai ab bhii,",
       "sham'-e-ummiid ko imroz bujhaae naa koii"
     ],
-    "tags": ["despair", "exhaustion", "surrender", "peace", "resignation", "emotional wounds", "hope"]
+    "tags": [
+      "despair",
+      "exhaustion",
+      "surrender",
+      "peace",
+      "resignation",
+      "emotional wounds",
+      "hope"
+    ],
+    "date": "2024-06-01"
   },
   {
     "id": 7,
@@ -309,7 +359,16 @@
       "ahasaas bikhar jaaenge, taqdiir badal jaaegii,",
       "vo raat yoon hii biitii thii, ye raat bhii Dhal jaaegii"
     ],
-    "tags": ["resilience", "healing", "time passage", "cyclical pain", "hope", "solitude", "night"]
+    "tags": [
+      "resilience",
+      "healing",
+      "time passage",
+      "cyclical pain",
+      "hope",
+      "solitude",
+      "night"
+    ],
+    "date": "2024-07-01"
   },
   {
     "id": 8,
@@ -359,7 +418,16 @@
       "kahaanii adhoorii naa hotii, naa hotii jo majbooriyaan bhii",
       "phir ek baar milane kii hasarat, … men palatii to hogii"
     ],
-    "tags": ["love", "separation", "longing", "distance", "communication", "unspoken feelings", "hope"]
+    "tags": [
+      "love",
+      "separation",
+      "longing",
+      "distance",
+      "communication",
+      "unspoken feelings",
+      "hope"
+    ],
+    "date": "2024-08-01"
   },
   {
     "id": 9,
@@ -401,7 +469,15 @@
       "usii lau men, merii nishaanii khaak ho jaatii,",
       "to phir baat kyaa thii"
     ],
-    "tags": ["regret", "missed opportunities", "communication", "unfulfilled promises", "what if", "relationships"]
+    "tags": [
+      "regret",
+      "missed opportunities",
+      "communication",
+      "unfulfilled promises",
+      "what if",
+      "relationships"
+    ],
+    "date": "2024-09-01"
   },
   {
     "id": 10,
@@ -439,7 +515,15 @@
       "qariib aa kar bhii dooriyon kaa ehasaas rahaa",
       "milake bichhadane kaa vo haal, dil se jaataa hii nahiin"
     ],
-    "tags": ["persistent memories", "love", "separation", "ghazal", "unable to forget", "distance"]
+    "tags": [
+      "persistent memories",
+      "love",
+      "separation",
+      "ghazal",
+      "unable to forget",
+      "distance"
+    ],
+    "date": "2024-10-01"
   },
   {
     "id": 11,
@@ -487,7 +571,15 @@
       "kyaa paayaa, kyaa kho baiThaa,",
       "isme.n kyaa rakhaa hai ab."
     ],
-    "tags": ["loss", "fading memories", "relationships", "emptiness", "existential", "melancholy"]
+    "tags": [
+      "loss",
+      "fading memories",
+      "relationships",
+      "emptiness",
+      "existential",
+      "melancholy"
+    ],
+    "date": "2024-11-01"
   },
   {
     "id": 12,
@@ -547,6 +639,17 @@
       "wahi aahat koi ummeed ki dastak bhi de jaye.",
       "zara ye raat dhal jaye, zara manzar badal jaye"
     ],
-    "tags": ["ghazal", "urdu poetry", "longing", "hope", "night", "solitude", "waiting", "change", "despair"]
+    "tags": [
+      "ghazal",
+      "urdu poetry",
+      "longing",
+      "hope",
+      "night",
+      "solitude",
+      "waiting",
+      "change",
+      "despair"
+    ],
+    "date": "2024-12-01"
   }
 ]

@@ -16,9 +16,10 @@ const PoemIndex = () => {
 
   // Filter poems based on search query
   const filteredPoems = useMemo(() => {
-    if (!searchQuery) return poems
+    const reversed = [...poems].reverse()
+    if (!searchQuery) return reversed
 
-    return poems.filter(poem => 
+    return reversed.filter(poem =>
       poem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       poem.lines.some(line => line.toLowerCase().includes(searchQuery.toLowerCase()))
     )
