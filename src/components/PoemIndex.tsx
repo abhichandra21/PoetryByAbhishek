@@ -1,11 +1,12 @@
 // src/components/PoemIndex.tsx
-import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import ScriptToggle from './ScriptToggle'
 import { useScriptPreference } from './ScriptPreference'
 import poems from '../data/poems.json'
 import type { Poem } from '../types'
+import { trackSearch, getSearchHistory } from '../lib/analytics'
 
 type ViewMode = 'grid' | 'list'
 
@@ -14,11 +15,35 @@ const PoemIndex = () => {
   const [selectedTag, setSelectedTag] = useState<string>('')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const { script } = useScriptPreference()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [suggestions, setSuggestions] = useState<string[]>([])
 
   const allTags = useMemo(
     () => [...new Set(poems.flatMap(p => p.tags || []))].sort(),
     []
   )
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const q = params.get('q') || ''
+    const tag = params.get('tag') || ''
+    setSearchQuery(q)
+    setSelectedTag(tag)
+  }, [])
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (searchQuery) params.set('q', searchQuery)
+    if (selectedTag) params.set('tag', selectedTag)
+    navigate({ search: params.toString() }, { replace: true })
+    setSuggestions(
+      getSearchHistory().filter((h) =>
+        h.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    )
+    if (searchQuery) trackSearch(searchQuery)
+  }, [searchQuery, selectedTag])
 
   // Filter poems based on search query and selected tag
   const filteredPoems = useMemo(() => {
@@ -107,22 +132,38 @@ const PoemIndex = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
+          {suggestions.length > 0 && (
+            <div className="absolute z-10 mt-1 w-full bg-paper-light dark:bg-paper-dark border border-ink-light/10 dark:border-ink-dark/10 rounded-lg shadow-soft">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSearchQuery(s)}
+                  className="block w-full text-left px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Tag Filter */}
-        <div>
-          <select
-            value={selectedTag}
-            onChange={(e) => setSelectedTag(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg bg-paper-accent dark:bg-paper-dark-accent border border-ink-light/10 dark:border-ink-dark/10 focus:border-accent-light dark:focus:border-accent-dark outline-none transition-colors"
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setSelectedTag('')}
+            className={`px-3 py-1 rounded-full border text-sm ${selectedTag === '' ? 'bg-accent-light dark:bg-accent-dark text-paper-light dark:text-paper-dark' : 'bg-paper-accent dark:bg-paper-dark-accent text-ink-light dark:text-ink-dark'}`}
           >
-            <option value="">All tags</option>
-            {allTags.map((tag) => (
-              <option key={tag} value={tag}>
-                {tag}
-              </option>
-            ))}
-          </select>
+            All
+          </button>
+          {allTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setSelectedTag(tag)}
+              className={`px-3 py-1 rounded-full border text-sm ${selectedTag === tag ? 'bg-accent-light dark:bg-accent-dark text-paper-light dark:text-paper-dark' : 'bg-paper-accent dark:bg-paper-dark-accent text-ink-light dark:text-ink-dark'}`}
+            >
+              {tag}
+            </button>
+          ))}
         </div>
 
         {/* View Controls */}
