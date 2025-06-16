@@ -117,10 +117,10 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
   const processLineWithTranslations = useCallback((line: string) => {
     // Get appropriate translations based on script
     const isRoman = script === 'roman';
-    
-    // If the line is empty, return it as-is
-    if (line.trim() === "") return <span>{line}</span>;
-    
+
+    // If the line is empty, render a non-breaking space to preserve spacing
+    if (line.trim() === "") return <span>&nbsp;</span>;
+
     // Find all words that need tooltips
     const wordsToReplace: Array<{
       word: string;
@@ -128,17 +128,17 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
       startIndex: number;
       endIndex: number;
     }> = [];
-    
+
     if (isRoman) {
       // For Roman script, use the romanToDevanagariMap
       for (const romanWord in romanToDevanagariMap) {
         let startIndex = 0;
         let index: number;
-        
+
         while ((index = line.toLowerCase().indexOf(romanWord.toLowerCase(), startIndex)) !== -1) {
           const devWord = romanToDevanagariMap[romanWord];
           const translation = allPoemTranslations[devWord];
-          
+
           wordsToReplace.push({
             word: line.substring(index, index + romanWord.length), // Use original case from poem
             translation: translation.meaning,
@@ -153,7 +153,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
       for (const devWord in allPoemTranslations) {
         let startIndex = 0;
         let index: number;
-        
+
         while ((index = line.indexOf(devWord, startIndex)) !== -1) {
           wordsToReplace.push({
             word: devWord,
@@ -165,46 +165,46 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         }
       }
     }
-    
+
     // Sort by startIndex to process from left to right
     wordsToReplace.sort((a, b) => a.startIndex - b.startIndex);
-    
+
     // If no words to replace, return the original line
     if (wordsToReplace.length === 0) {
       return <span>{line}</span>;
     }
-    
+
     // Build result with tooltips
     const result: React.ReactNode[] = [];
     let lastIndex = 0;
-    
+
     for (let i = 0; i < wordsToReplace.length; i++) {
       const { word, translation, startIndex, endIndex } = wordsToReplace[i];
-      
+
       // Add text before this word
       if (startIndex > lastIndex) {
         result.push(<span key={`text-${i}`}>{line.substring(lastIndex, startIndex)}</span>);
       }
-      
+
       // Add the word with a tooltip
       result.push(
-        <TranslationTooltip 
-          key={`tooltip-${i}`} 
-          word={word} 
+        <TranslationTooltip
+          key={`tooltip-${i}`}
+          word={word}
           translation={translation}
         >
           {line.substring(startIndex, endIndex)}
         </TranslationTooltip>
       );
-      
+
       lastIndex = endIndex;
     }
-    
+
     // Add any remaining text
     if (lastIndex < line.length) {
       result.push(<span key="text-end">{line.substring(lastIndex)}</span>);
     }
-    
+
     return <>{result}</>;
   }, [script]);
 
