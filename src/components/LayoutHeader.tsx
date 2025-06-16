@@ -25,6 +25,7 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
     { path: '/read', label: 'Read', labelHindi: 'पढ़ें' },
     { path: '/about', label: 'About', labelHindi: 'परिचय' },
     { path: '/contact', label: 'Contact', labelHindi: 'संपर्क' },
+    { path: '/subscribe', label: 'Subscribe', labelHindi: 'सदस्यता' },
   ];
 
   return (
