@@ -6,7 +6,6 @@ import ScriptToggle from './ScriptToggle'
 import { useScriptPreference } from './ScriptPreference'
 import poems from '../data/poems.json'
 import type { Poem } from '../types'
-import { trackSearch, getSearchHistory } from '../lib/analytics'
 import allTranslations, { romanToDevanagariMap } from '../translations/poemTranslations'
 
 const devToRomanMap: Record<string, string> = {}
@@ -25,12 +24,6 @@ const PoemIndex = () => {
   const { script } = useScriptPreference()
   const location = useLocation()
   const navigate = useNavigate()
-  const [suggestions, setSuggestions] = useState<string[]>([])
-
-  const allTags = useMemo(
-    () => [...new Set(poems.flatMap(p => p.tags || []))].sort(),
-    []
-  )
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
@@ -45,12 +38,6 @@ const PoemIndex = () => {
     if (searchQuery) params.set('q', searchQuery)
     if (activeTag) params.set('tag', activeTag)
     navigate({ search: params.toString() }, { replace: true })
-    setSuggestions(
-      getSearchHistory().filter((h) =>
-        h.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    )
-    if (searchQuery) trackSearch(searchQuery)
   }, [searchQuery, activeTag])
 
   // Filter poems based on search query and active tag
@@ -148,52 +135,10 @@ const PoemIndex = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          {suggestions.length > 0 && (
-            <div className="absolute z-10 mt-1 w-full bg-paper-light dark:bg-paper-dark border border-ink-light/10 dark:border-ink-dark/10 rounded-lg shadow-soft">
-              {suggestions.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setSearchQuery(s)}
-                  className="block w-full text-left px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          )}
+          {/* no search history suggestions */}
         </div>
 
-        {/* Tag Filter */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="flex flex-wrap gap-2 mb-8 justify-center"
-        >
-          <button
-            onClick={() => setActiveTag(null)}
-            className={`px-3 py-1 text-sm rounded-full transition-colors ${
-              !activeTag
-                ? 'bg-accent-light text-paper-light dark:bg-accent-dark dark:text-paper-dark'
-                : 'bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/20'
-            }`}
-          >
-            All
-          </button>
-          {allTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => setActiveTag(tag)}
-              className={`px-3 py-1 text-sm rounded-full transition-colors ${
-                activeTag === tag
-                  ? 'bg-accent-light text-paper-light dark:bg-accent-dark dark:text-paper-dark'
-                  : 'bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/20'
-              }`}
-            >
-              {tag}
-            </button>
-          ))}
-        </motion.div>
+        {/* Tag filter removed */}
 
         {/* View Controls */}
         <div className="flex justify-between items-center">
@@ -254,24 +199,7 @@ const PoemIndex = () => {
                     {script === 'roman' && poem.romanizedLines ? poem.romanizedLines[0] : poem.lines[0]}
                   </p>
 
-                  {/* Tags */}
-                  {poem.tags && poem.tags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-1">
-                      {poem.tags.slice(0, 3).map((tag, index) => (
-                        <span
-                          key={index}
-                          className="text-xs px-2 py-0.5 rounded bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-tertiary dark:text-ink-dark-tertiary"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                      {poem.tags.length > 3 && (
-                        <span className="text-xs px-2 py-0.5 rounded bg-sage-light/20 dark:bg-sage-dark/20 text-ink-light-tertiary dark:text-ink-dark-tertiary">
-                          +{poem.tags.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  {/* tags removed on index */}
                 </div>
 
                 {/* Arrow */}
