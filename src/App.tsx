@@ -9,6 +9,7 @@ import PoemBook from './components/PoemBook.tsx'
 import PoemIndex from './components/PoemIndex.tsx'
 import AuthorBio from './components/AuthorBio.tsx'
 import Contact from './components/Contact.tsx'
+import Subscribe from './components/Subscribe.tsx'
 import NotFound from './components/NotFound.tsx'
 // import DebugEnv from './components/DebugEnv'
 
@@ -77,6 +78,7 @@ function App() {
             <Route path="/read" element={<PoemBook />} />
             <Route path="/about" element={<AuthorBio />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/subscribe" element={<Subscribe />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

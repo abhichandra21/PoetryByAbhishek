@@ -11,3 +11,9 @@ export interface Poem {
   romanizedLines?: string[];
   translations?: Record<string, string>;
 }
+
+export interface Subscriber {
+  id: string
+  email: string
+  created_at: string
+}
