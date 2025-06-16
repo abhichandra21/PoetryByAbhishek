@@ -47,7 +47,7 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`relative text-sm font-medium transition-colors ${
+                className={`relative text-sm font-medium transition-colors px-3 py-2 tap-target ${
                   isActive(item.path)
                     ? 'text-accent-light dark:text-accent-dark'
                     : 'text-ink-light-secondary dark:text-ink-dark-secondary hover:text-ink-light dark:hover:text-ink-dark'
@@ -70,11 +70,11 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
           <div className="flex items-center gap-2">
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <motion.button 
+              <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-full bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors"
+                className="p-2 rounded-full bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors w-11 h-11 flex items-center justify-center tap-target"
                 aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               >
                 {mobileMenuOpen ? (
@@ -90,11 +90,11 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
             </div>
 
             {/* Dark Mode Toggle */}
-            <motion.button 
+            <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setDarkMode(!darkMode)}
-              className="relative p-2 rounded-full bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors duration-200"
+              className="relative p-2 rounded-full bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors duration-200 w-11 h-11 flex items-center justify-center tap-target"
               aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
               <motion.div
@@ -128,7 +128,7 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
                   key={item.path}
                   to={item.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`px-4 py-2 rounded-lg my-1 transition-colors ${
+                  className={`px-4 py-2 rounded-lg my-1 transition-colors tap-target ${
                     isActive(item.path)
                       ? 'bg-accent-light/10 dark:bg-accent-dark/10 text-accent-light dark:text-accent-dark'
                       : 'text-ink-light-secondary dark:text-ink-dark-secondary hover:bg-paper-accent dark:hover:bg-paper-dark-accent'

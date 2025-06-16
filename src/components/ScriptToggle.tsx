@@ -14,9 +14,9 @@ const ScriptToggle: React.FC<ScriptToggleProps> = ({ className = "" }) => {
   
   return (
     <div className={`relative ${className}`}>
-      <button 
+      <button
         onClick={toggleScript}
-        className="flex items-center font-medium text-xs border border-ink-light/30 dark:border-ink-dark/30 rounded-full overflow-hidden transition-all duration-200 hover:border-accent-light dark:hover:border-accent-dark"
+        className="flex items-center font-medium text-xs border border-ink-light/30 dark:border-ink-dark/30 rounded-full overflow-hidden transition-all duration-200 hover:border-accent-light dark:hover:border-accent-dark tap-target min-h-11"
         aria-label={`Switch to ${script === 'devanagari' ? 'Roman' : 'Devanagari'} script`}
       >
         {/* Icon container */}
