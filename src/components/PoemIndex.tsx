@@ -7,12 +7,20 @@ import { useScriptPreference } from './ScriptPreference'
 import poems from '../data/poems.json'
 import type { Poem } from '../types'
 import { trackSearch, getSearchHistory } from '../lib/analytics'
+import allTranslations, { romanToDevanagariMap } from '../translations/poemTranslations'
+
+const devToRomanMap: Record<string, string> = {}
+Object.entries(allTranslations).forEach(([dev, val]) => {
+  if ((val as { roman?: string }).roman) {
+    devToRomanMap[dev.toLowerCase()] = (val as { roman: string }).roman.toLowerCase()
+  }
+})
 
 type ViewMode = 'grid' | 'list'
 
 const PoemIndex = () => {
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedTag, setSelectedTag] = useState<string>('')
+  const [activeTag, setActiveTag] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const { script } = useScriptPreference()
   const location = useLocation()
@@ -27,15 +35,15 @@ const PoemIndex = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search)
     const q = params.get('q') || ''
-    const tag = params.get('tag') || ''
+    const tag = params.get('tag')
     setSearchQuery(q)
-    setSelectedTag(tag)
+    setActiveTag(tag)
   }, [])
 
   useEffect(() => {
     const params = new URLSearchParams()
     if (searchQuery) params.set('q', searchQuery)
-    if (selectedTag) params.set('tag', selectedTag)
+    if (activeTag) params.set('tag', activeTag)
     navigate({ search: params.toString() }, { replace: true })
     setSuggestions(
       getSearchHistory().filter((h) =>
@@ -43,31 +51,39 @@ const PoemIndex = () => {
       )
     )
     if (searchQuery) trackSearch(searchQuery)
-  }, [searchQuery, selectedTag])
+  }, [searchQuery, activeTag])
 
-  // Filter poems based on search query and selected tag
+  // Filter poems based on search query and active tag
   const filteredPoems = useMemo(() => {
     const reversed = [...poems].reverse()
     const query = searchQuery.toLowerCase()
+    const devVariant = romanToDevanagariMap[query]
+    const romanVariant = devToRomanMap[query]
 
     const matchesQuery = (poem: Poem) => {
       if (!query) return true
-      return (
-        poem.title.toLowerCase().includes(query) ||
-        (poem.romanizedTitle && poem.romanizedTitle.toLowerCase().includes(query)) ||
-        poem.lines.some(line => line.toLowerCase().includes(query)) ||
-        (poem.romanizedLines && poem.romanizedLines.some(l => l.toLowerCase().includes(query))) ||
-        (poem.tags && poem.tags.some(tag => tag.toLowerCase().includes(query))) ||
-        (poem.date && poem.date.includes(query))
-      )
+
+      const searchTexts = [
+        poem.title,
+        poem.romanizedTitle ?? '',
+        ...(poem.lines ?? []),
+        ...(poem.romanizedLines ?? []),
+        ...(poem.tags ?? []),
+        poem.date ?? ''
+      ].map(t => t.toLowerCase())
+
+      if (searchTexts.some(t => t.includes(query))) return true
+      if (devVariant && searchTexts.some(t => t.includes(devVariant.toLowerCase()))) return true
+      if (romanVariant && searchTexts.some(t => t.includes(romanVariant.toLowerCase()))) return true
+      return false
     }
 
     return reversed.filter(poem => {
       if (!matchesQuery(poem)) return false
-      if (selectedTag && !(poem.tags || []).includes(selectedTag)) return false
+      if (activeTag && !(poem.tags || []).includes(activeTag)) return false
       return true
     })
-  }, [searchQuery, selectedTag])
+  }, [searchQuery, activeTag])
 
   // Display title based on script preference - with proper type
   const getDisplayTitle = (poem: Poem) => {
@@ -148,23 +164,36 @@ const PoemIndex = () => {
         </div>
 
         {/* Tag Filter */}
-        <div className="flex flex-wrap gap-2">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="flex flex-wrap gap-2 mb-8 justify-center"
+        >
           <button
-            onClick={() => setSelectedTag('')}
-            className={`px-3 py-1 rounded-full border text-sm ${selectedTag === '' ? 'bg-accent-light dark:bg-accent-dark text-paper-light dark:text-paper-dark' : 'bg-paper-accent dark:bg-paper-dark-accent text-ink-light dark:text-ink-dark'}`}
+            onClick={() => setActiveTag(null)}
+            className={`px-3 py-1 text-sm rounded-full transition-colors ${
+              !activeTag
+                ? 'bg-accent-light text-paper-light dark:bg-accent-dark dark:text-paper-dark'
+                : 'bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/20'
+            }`}
           >
             All
           </button>
           {allTags.map((tag) => (
             <button
               key={tag}
-              onClick={() => setSelectedTag(tag)}
-              className={`px-3 py-1 rounded-full border text-sm ${selectedTag === tag ? 'bg-accent-light dark:bg-accent-dark text-paper-light dark:text-paper-dark' : 'bg-paper-accent dark:bg-paper-dark-accent text-ink-light dark:text-ink-dark'}`}
+              onClick={() => setActiveTag(tag)}
+              className={`px-3 py-1 text-sm rounded-full transition-colors ${
+                activeTag === tag
+                  ? 'bg-accent-light text-paper-light dark:bg-accent-dark dark:text-paper-dark'
+                  : 'bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/20'
+              }`}
             >
               {tag}
             </button>
           ))}
-        </div>
+        </motion.div>
 
         {/* View Controls */}
         <div className="flex justify-between items-center">
