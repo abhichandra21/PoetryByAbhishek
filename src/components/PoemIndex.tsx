@@ -108,7 +108,6 @@ const PoemIndex = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-3xl font-bold text-center hindi mb-2">कविता संग्रह</h1>
         <p className="text-center text-ink-light-secondary dark:text-ink-dark-secondary">
           Browse Abhishek's complete collection of poems
         </p>
