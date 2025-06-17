@@ -8,14 +8,14 @@ export interface WordTranslation {
 
 // Type for a dictionary of translations
 export type TranslationDictionary = Record<string, WordTranslation>;
-  
+
   // Single dictionary for all poem translations
   export const allPoemsTranslations: TranslationDictionary = {
     // Poem 1
     "संजोये": { meaning: "cherished", roman: "sanjoye" },
     "पिरोए": { meaning: "strung together", roman: "piroe" },
     "हालातों": { meaning: "situations", roman: "haalaaton" },
-  
+
     // Poem 2
     "तना-तनी": { meaning: "tension, struggle", roman: "tanaa-tanii" },
     "दुहराये": { meaning: "repeat", roman: "duhraaye" },
@@ -24,7 +24,7 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "निष्प्राण": { meaning: "lifeless, without spirit", roman: "nishpraaN" },
     "उजियाले": { meaning: "light, brightness", roman: "ujiyaale" },
     "ज़ंजीरें": { meaning: "chains", roman: "zanjiiren" },
-  
+
     // Poem 3
     "सब्र": { meaning: "patience", roman: "sabr" },
     "हर्फ़": { meaning: "letter, word", roman: "harf" },
@@ -35,7 +35,7 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "लम्हा": { meaning: "moment", roman: "lamhaa" },
     "फ़ासले": { meaning: "distances", roman: "faasale" },
     "दरम्यान": { meaning: "between", roman: "daramyaan" },
-  
+
     // Poem 4
     "ख़्वाब": { meaning: "dream", roman: "khvaab" },
     "चैन": { meaning: "peace, tranquility", roman: "chain" },
@@ -51,14 +51,14 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "कूचा": { meaning: "street, lane", roman: "koochaa" },
     "रहगुज़र": { meaning: "path, way, road", roman: "rahaguzar" },
     "जानिब": { meaning: "towards, in the direction of", roman: "jaanib" },
-  
+
     // Poem 5
     "चौखट": { meaning: "threshold", roman: "chaukhat" },
     "गुज़री उम्र": { meaning: "passed age, past life", roman: "guzrii umr" },
     "क़िस्से": { meaning: "stories", roman: "qisse" },
     "चंद बातों": { meaning: "a few matters/conversations", roman: "chand baaton" },
     "टीस": { meaning: "pang, ache", roman: "tiis" },
-  
+
     // Poem 6
     "जगाए": { meaning: "awaken", roman: "jagaae" },
     "खामोशियाँ": { meaning: "silences", roman: "khaamoshiyaan" },
@@ -72,7 +72,7 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "शम'-ए-उम्मीद": { meaning: "lamp of hope", roman: "sham'-e-ummiid" },
     "इमरोज़": { meaning: "today", roman: "imroz" },
     "बुझाए": { meaning: "extinguish", roman: "buzhaae" },
-  
+
     // Poem 7
     "ढल जाएगी": { meaning: "will pass, will set", roman: "Dhal jaaegii" },
     "गुमनाम": { meaning: "unnamed, unknown", roman: "gumanaam" },
@@ -82,20 +82,20 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "रवानी": { meaning: "flow", roman: "ravaanii" },
     "बिखर जाएँगे": { meaning: "will scatter", roman: "bikhar jaaenge" },
     "तक़दीर": { meaning: "destiny, fate", roman: "taqdiir" },
-  
+
     // Poem 8
     "कसक": { meaning: "pang, ache, yearning", roman: "kasak" },
     "आहट": { meaning: "sound of footsteps, presence", roman: "aahat" },
     "शम्मा": { meaning: "lamp", roman: "shammaa" },
     "तनहाइयों": { meaning: "loneliness", roman: "tanhaaiyon" },
     "आग़ाज़": { meaning: "beginning", roman: "aagaaz" },
-  
+
     // Poem 9
     "परस्पर": { meaning: "mutually, with each other", roman: "paraspar" },
     "चंद": { meaning: "a few", roman: "chand" },
     "सिरहाने": { meaning: "by the head (bedside)", roman: "sirahaane" },
     "लॉ": { meaning: "flame (of a lamp/desire)", roman: "lau" },
-  
+
     // Poem 10
     "ख़याल": { meaning: "thought", roman: "khayaal" },
     "मलाल": { meaning: "regret", roman: "malaal" },
@@ -116,9 +116,12 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "नक़्श-ए-क़दम": { meaning: "footprints/footsteps", roman: "naqsh-e-qadam" },
     "मंज़र": { meaning: "spectacle, a scene, view", roman: "ma.nzar" },
     "साहिल": { meaning: "the sea-shore, beach, coast", roman: "saahil" },
-    "फ़क़त": { meaning: "merely, simply, only", roman: "faqat" }
+    "फ़क़त": { meaning: "merely, simply, only", roman: "faqat" },
+
+    // Poem 12
+    "तसव्वुर": { meaning: "imagination, fancy", roman: "tasavvur" },
   };
-  
+
 // Create a reverse mapping from Roman to Devanagari
 export const romanToDevanagariMap: Record<string, string> = {};
 
