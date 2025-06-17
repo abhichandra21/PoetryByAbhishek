@@ -113,17 +113,17 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Menu Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden border-t border-ink-light/10 dark:border-ink-dark/10"
+          <motion.aside
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.3 }}
+            className="fixed inset-y-0 right-0 w-64 md:hidden bg-paper-light dark:bg-paper-dark shadow-medium border-l border-ink-light/10 dark:border-ink-dark/10 z-50 flex flex-col"
           >
-            <nav className="flex flex-col py-3 px-4 bg-paper-light dark:bg-paper-dark">
+            <nav className="flex flex-col py-6 px-4 overflow-y-auto flex-1">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
@@ -140,7 +140,7 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
                 </Link>
               ))}
             </nav>
-          </motion.div>
+          </motion.aside>
         )}
       </AnimatePresence>
     </header>

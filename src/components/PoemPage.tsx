@@ -7,7 +7,7 @@ import {
   useCallback,
   useRef,
 } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import type { Poem } from '../types';
 import ScriptToggle from './ScriptToggle';
 import { useScriptPreference } from './ScriptPreference';
@@ -31,6 +31,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
   const { script } = useScriptPreference();
   const [textSize, setTextSize] = useState<TextSize>('medium');
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   /* ── persist text‑size preference ─────────────────────────── */
   useEffect(() => {
@@ -211,7 +212,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
 
   /* ── framer‑motion variants ───────────────────────────────── */
   const lineVariants = {
-    hidden: { opacity: 0, y: 10 },
+    hidden: { opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 10 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
@@ -222,7 +223,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
   /* ────────────────── render ───────────────────────────────── */
   return (
     <motion.article
-      initial={{ opacity: 0, scale: 0.98 }}
+      initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className="relative max-w-4xl mx-auto"
@@ -292,7 +293,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-paper-accent to-paper-light dark:from-paper-dark-accent dark:to-paper-dark rounded-xl shadow-book -z-10" />
 
       {/* main content box */}
-      <div className="relative bg-paper-light dark:bg-paper-dark rounded-xl p-8 md:p-12 shadow-medium border border-ink-light/5 dark:border-ink-dark/5">
+      <div className="relative bg-paper-light dark:bg-paper-dark rounded-xl p-6 md:p-12 shadow-medium border border-ink-light/5 dark:border-ink-dark/5">
         {/* decorative corner */}
         <div className="absolute top-4 right-4 w-16 h-16 opacity-5 dark:opacity-10">
           <svg viewBox="0 0 100 100" className="w-full h-full">
