@@ -24,22 +24,27 @@
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
   
-  .hindi,
-  .roman {
+  .hindi {
     font-family: 'merriweather', sans-serif;
+    font-size: 20px;
     text-rendering: optimizeLegibility;
-    @apply font-serif;
-    font-size: 1.1rem;
-    line-height: 1.75;
-    @apply leading-relaxed md:leading-loose;
+    line-height: 2 !important;
+    @apply leading-relaxed;
   }
 
-  @media (max-width: 420px) {
-    .hindi,
-    .roman {
-      font-size: 1rem;
-      line-height: 1.6;
-    }
+  .roman {
+    font-family: 'merriweather', sans-serif;
+    font-size: 20px;
+    text-rendering: optimizeLegibility;
+    line-height: 2 !important;
+    @apply leading-relaxed;
+  }
+
+  .hindi, .roman {
+    @apply font-serif; /* Use the new serif font (Lora) */
+    font-size: 1.2rem; /* A slightly more readable base size */
+    @apply leading-loose md:leading-loose; /* Increase line spacing */
+    text-rendering: optimizeLegibility;
   }
     
   .icon {
