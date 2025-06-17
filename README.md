@@ -60,5 +60,27 @@ To let readers receive updates when a new poem is added, a simple subscription s
 1. Create a `subscribers` table in Supabase with at least an `email` column.
 2. Deploy the site with your Supabase credentials in `.env.local`.
 3. Visitors can sign up on the `/subscribe` page.
-4. After adding new poems to `src/data/poems.json`, run `node scripts/sendNewPoemEmails.js` to log email notifications (replace the logging with your email service to actually send messages).
+4. After adding new poems to `src/data/poems.json`, run `node scripts/sendNewPoemEmails.js` to send email notifications.
+
+## Google Analytics
+
+Set your measurement ID in `.env.local`:
+
+```
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+The site and analytics utilities read this environment variable at runtime.
+
+## Sending Email Notifications
+
+`sendNewPoemEmails.js` uses `nodemailer` for SMTP delivery. Provide the following variables in `.env.local`:
+
+```
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your_user
+SMTP_PASS=your_password
+MAIL_FROM="Poetry Bot <bot@example.com>"
+```
 
