@@ -4,6 +4,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { createClient } from '@supabase/supabase-js'
 import dotenv from 'dotenv'
+import nodemailer from 'nodemailer'
 
 dotenv.config({ path: '.env.local' })
 
@@ -19,6 +20,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 const poemsPath = path.join(__dirname, '../src/data/poems.json')
 const poems = JSON.parse(fs.readFileSync(poemsPath, 'utf8'))
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT || 587),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+})
 
 const statePath = path.join(__dirname, 'last_poem_id.txt')
 let lastId = 0
@@ -45,8 +56,13 @@ async function main() {
 
   for (const poem of newPoems) {
     for (const sub of subscribers) {
-      console.log(`Notify ${sub.email} about new poem "${poem.title}"`)
-      // Integrate your email service here
+      await transporter.sendMail({
+        from: process.env.MAIL_FROM,
+        to: sub.email,
+        subject: `New Poem: ${poem.title}`,
+        text: `A new poem titled "${poem.title}" has been added.`
+      })
+      console.log(`Sent notification to ${sub.email} for poem "${poem.title}"`)
     }
     if (poem.id > lastId) {
       lastId = poem.id

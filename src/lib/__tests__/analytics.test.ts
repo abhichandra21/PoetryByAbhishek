@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { trackPoemView, getPoemViews } from '../analytics'
+import {
+  trackPoemView,
+  getPoemViews,
+  trackSearch,
+  getSearchHistory
+} from '../analytics'
 
 // Reuse the same mock as session tests
 const storage: Record<string, string> = {}
@@ -27,5 +32,17 @@ describe('poem view analytics', () => {
 
     trackPoemView(1)
     expect(getPoemViews(1)).toBe(2)
+  })
+})
+
+describe('search analytics', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('stores search queries and returns history', () => {
+    trackSearch('love')
+    trackSearch('life')
+    expect(getSearchHistory()).toEqual(['life', 'love'])
   })
 })

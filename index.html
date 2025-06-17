@@ -14,12 +14,12 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Poetry by Abhishek</title>
     <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-26SJZ2E3TE"></script>
-    <script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=%VITE_GA_MEASUREMENT_ID%"></script>
+    <script type="module">
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-26SJZ2E3TE');
+      gtag('config', import.meta.env.VITE_GA_MEASUREMENT_ID);
     </script>
   </head>
   <body class="bg-paper-light text-ink-light dark:bg-paper-dark dark:text-ink-dark min-h-screen">
