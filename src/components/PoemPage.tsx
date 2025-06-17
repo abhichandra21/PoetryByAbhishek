@@ -324,7 +324,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
               variants={lineVariants}
               initial="hidden"
               animate="visible"
-              className={`${textSizeClass} leading-relaxed md:leading-loose text-ink-light dark:text-ink-dark indent-4 ${
+              className={`${textSizeClass} text-ink-light dark:text-ink-dark indent-4 ${
                 script === 'devanagari' ? 'hindi' : 'roman'
               }`}
             >
