@@ -316,7 +316,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         </motion.h1>
 
         {/* lines */}
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           {displayLines.map((line, i) => (
             <motion.p
               key={`${poem.id}-${i}`}
@@ -324,7 +324,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
               variants={lineVariants}
               initial="hidden"
               animate="visible"
-              className={`${textSizeClass} leading-loose text-ink-light dark:text-ink-dark indent-4 ${
+              className={`${textSizeClass} leading-relaxed md:leading-loose text-ink-light dark:text-ink-dark indent-4 ${
                 script === 'devanagari' ? 'hindi' : 'roman'
               }`}
             >
