@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FC } from 'react' // Type-only import for FC
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { createPortal } from 'react-dom'
 
 interface LayoutHeaderProps {
   darkMode: boolean;
@@ -28,7 +29,40 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
     { path: '/subscribe', label: 'Subscribe', labelHindi: 'सदस्यता' },
   ];
 
+  const mobileMenu = (
+    <AnimatePresence>
+      {mobileMenuOpen && (
+        <motion.aside
+          initial={{ x: '100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '100%' }}
+          transition={{ type: 'tween', duration: 0.3 }}
+          className="fixed inset-y-0 right-0 w-64 md:hidden bg-paper-light dark:bg-paper-dark shadow-medium border-l border-ink-light/10 dark:border-ink-dark/10 z-[60] flex flex-col"
+        >
+          <nav className="flex flex-col py-6 px-4 overflow-y-auto flex-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`px-4 py-2 rounded-lg my-1 transition-colors tap-target ${
+                  isActive(item.path)
+                    ? 'bg-accent-light/10 dark:bg-accent-dark/10 text-accent-light dark:text-accent-dark'
+                    : 'text-ink-light-secondary dark:text-ink-dark-secondary hover:bg-paper-accent dark:hover:bg-paper-dark-accent'
+                }`}
+              >
+                <span className="hindi text-base">{item.labelHindi}</span>
+                <span className="ml-2 text-sm">({item.label})</span>
+              </Link>
+            ))}
+          </nav>
+        </motion.aside>
+      )}
+    </AnimatePresence>
+  )
+
   return (
+    <>
     <header className="sticky top-0 z-50 backdrop-blur-sm bg-paper-light/80 dark:bg-paper-dark/80 border-b border-ink-light/10 dark:border-ink-dark/10 shadow-soft">
       <div className="max-w-6xl mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
@@ -113,37 +147,9 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode }) => {
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.aside
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'tween', duration: 0.3 }}
-            className="fixed inset-y-0 right-0 w-64 md:hidden bg-paper-light dark:bg-paper-dark shadow-medium border-l border-ink-light/10 dark:border-ink-dark/10 z-50 flex flex-col"
-          >
-            <nav className="flex flex-col py-6 px-4 overflow-y-auto flex-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-4 py-2 rounded-lg my-1 transition-colors tap-target ${
-                    isActive(item.path)
-                      ? 'bg-accent-light/10 dark:bg-accent-dark/10 text-accent-light dark:text-accent-dark'
-                      : 'text-ink-light-secondary dark:text-ink-dark-secondary hover:bg-paper-accent dark:hover:bg-paper-dark-accent'
-                  }`}
-                >
-                  <span className="hindi text-base">{item.labelHindi}</span>
-                  <span className="ml-2 text-sm">({item.label})</span>
-                </Link>
-              ))}
-            </nav>
-          </motion.aside>
-        )}
-      </AnimatePresence>
     </header>
+    {typeof document !== 'undefined' && createPortal(mobileMenu, document.body)}
+    </>
   )
 }
 
