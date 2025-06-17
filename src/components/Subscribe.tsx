@@ -10,7 +10,7 @@ const Subscribe = () => {
       className="max-w-xl mx-auto px-4 py-8"
     >
       <h1 className="text-3xl md:text-4xl font-bold text-center hindi text-accent-light dark:text-accent-dark mb-6">
-        सदस्यता लें
+        Subscribe
       </h1>
       <SubscribeForm />
     </motion.div>
