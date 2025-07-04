@@ -168,11 +168,40 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
       }
     }
 
-    // Sort by startIndex to process from left to right
-    wordsToReplace.sort((a, b) => a.startIndex - b.startIndex);
+    // Sort by startIndex to process from left to right, but prioritize longer matches
+    wordsToReplace.sort((a, b) => {
+      if (a.startIndex !== b.startIndex) {
+        return a.startIndex - b.startIndex;
+      }
+      // If same start position, prioritize longer word
+      return b.word.length - a.word.length;
+    });
+
+    // Remove overlapping matches, keeping the longer/better ones
+    const filteredWordsToReplace = [];
+    for (let i = 0; i < wordsToReplace.length; i++) {
+      const current = wordsToReplace[i];
+      let isOverlapping = false;
+      
+      // Check if current word overlaps with any already accepted word
+      for (const accepted of filteredWordsToReplace) {
+        if (
+          (current.startIndex >= accepted.startIndex && current.startIndex < accepted.endIndex) ||
+          (current.endIndex > accepted.startIndex && current.endIndex <= accepted.endIndex) ||
+          (current.startIndex <= accepted.startIndex && current.endIndex >= accepted.endIndex)
+        ) {
+          isOverlapping = true;
+          break;
+        }
+      }
+      
+      if (!isOverlapping) {
+        filteredWordsToReplace.push(current);
+      }
+    }
 
     // If no words to replace, return the original line
-    if (wordsToReplace.length === 0) {
+    if (filteredWordsToReplace.length === 0) {
       return <span>{line}</span>;
     }
 
@@ -180,8 +209,8 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     const result: React.ReactNode[] = [];
     let lastIndex = 0;
 
-    for (let i = 0; i < wordsToReplace.length; i++) {
-      const { word, translation, startIndex, endIndex } = wordsToReplace[i];
+    for (let i = 0; i < filteredWordsToReplace.length; i++) {
+      const { word, translation, startIndex, endIndex } = filteredWordsToReplace[i];
 
       // Add text before this word
       if (startIndex > lastIndex) {
