@@ -103,13 +103,11 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "चाक-ए-दिल": { meaning: "wounded/torn heart", roman: "chaak-e-dil" },
     "जमाल": { meaning: "beauty", roman: "jamaal" },
     "अल्फ़ाज़": { meaning: "words", roman: "alfaaz" },
-    //"ख़्वाब-ओ-ख़याल": { meaning: "dreams and thoughts", roman: "khvaab-o-khayaal" },
     "एहसास": { meaning: "feeling, sense", roman: "ehasaas" },
-    //"हाल": { meaning: "state, condition", roman: "haal" },
     "देरीना": { meaning: "long-held, old", roman: "deriina" },
     "सहरा": { meaning: "desert, waste, wilderness", roman: "sahraa" },
 
-    // Poem 10
+    // Poem 11
     "फ़ज़ा": { meaning: "ambience", roman: "fazaa" },
     "दरख़्तों": { meaning: "trees", roman: "daraKto.n" },
     "सिहरता": { meaning: "shivered", roman: "siharta" },
@@ -120,6 +118,29 @@ export type TranslationDictionary = Record<string, WordTranslation>;
 
     // Poem 12
     "तसव्वुर": { meaning: "imagination, fancy", roman: "tasavvur" },
+
+    // Poem 16
+    "तह": { meaning: "layer, fold", roman: "teh" },
+    "रंजिशें": { meaning: "grievances, resentments", roman: "ranjishein" },
+
+    // Poem 17
+    "बा-कमाल": { meaning: "wonderful, excellent", roman: "ba-kamaal" },
+    "हिज्र": { meaning: "separation (from a lover)", roman: "hijr" },
+    "मयस्सर": { meaning: "available, obtainable", roman: "mayassar" },
+    "बा'द-ए-विसाल": { meaning: "after the union", roman: "ba'ad-e-visaal" },
+    "रिवायत": { meaning: "tradition, custom", roman: "riwaayat" },
+    "उसूलों": { meaning: "principles", roman: "usoolon" },
+    "पाएमाल": { meaning: "trampled, ruined", roman: "paayemaal" },
+    "ताउम्र": { meaning: "lifelong", roman: "ta-umr" },
+    "मिसाल": { meaning: "example", roman: "misaal" },
+    "नक़्स-ए-कमाल": { meaning: "flaw in perfection", roman: "naqs-e-kamaal" },
+    "पुर-अमन": { meaning: "peaceful", roman: "pur-aman" },
+    "शहर-ए-वबाल": { meaning: "city of calamity/affliction", roman: "sheher-e-wabaal" },
+    "वक़्त-ए-रुख़सत": { meaning: "time of departure", roman: "waqt-e-rukhsat" },
+    "बयाँ": { meaning: "narration, description", roman: "bayaan" },
+    "अर्ज़-ए-हाल": { meaning: "statement of one's condition", roman: "arz-e-haal" },
+    "इत्मीनान-ए-दिल": { meaning: "peace of heart, contentment", roman: "itminaan-e-dil" },
+    "बे-मलाल": { meaning: "without regret", roman: "be-malaal" },
   };
 
 // Create a reverse mapping from Roman to Devanagari
