@@ -1,6 +1,6 @@
 // src/components/PoemPage.tsx
 import type { FC } from 'react';
-import {
+import React, {
   useState,
   useEffect,
   useMemo,
@@ -14,6 +14,7 @@ import { useScriptPreference } from './ScriptPreference';
 import PoemComments from './PoemComments';
 import PoemLike from './PoemLike'; // Add this import
 import TranslationTooltip from './TranslationTooltip';
+import WordTooltip from './WordTooltip';
 import { Link } from 'react-router-dom';
 import allPoemTranslations, { romanToDevanagariMap } from '../translations/poemTranslations';
 
@@ -239,6 +240,66 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     return <>{result}</>;
   }, [script]);
 
+  /* ── Helper function to wrap remaining words with external dictionary tooltips ──── */
+  const wrapWordsWithDictionaryTooltips = useCallback((content: React.ReactNode): React.ReactNode => {
+    if (typeof content === 'string') {
+      // Split by spaces and punctuation, but keep the delimiters
+      const parts = content.split(/(\s+|[।,;:!?\-"'])/);
+      
+      return parts.map((part, index) => {
+        // If it's whitespace or punctuation, return as is
+        if (/^\s+$/.test(part) || /^[।,;:!?\-"']$/.test(part)) {
+          return <span key={index}>{part}</span>;
+        }
+        
+        // If it's a word, wrap it with WordTooltip
+        if (part.trim() && !/^\s+$/.test(part)) {
+          return (
+            <WordTooltip key={index} word={part}>
+              {part}
+            </WordTooltip>
+          );
+        }
+        
+        return <span key={index}>{part}</span>;
+      });
+    }
+    
+    if (React.isValidElement(content)) {
+      if (content.type === TranslationTooltip) {
+        // Don't wrap TranslationTooltip children, they already have tooltips
+        return content;
+      }
+      
+      if (content.props && typeof content.props === 'object' && 'children' in content.props) {
+        const props = content.props as { children: React.ReactNode };
+        return React.cloneElement(content as React.ReactElement<any>, {
+          ...content.props,
+          children: wrapWordsWithDictionaryTooltips(props.children)
+        });
+      }
+    }
+    
+    if (Array.isArray(content)) {
+      return content.map((child, index) => (
+        <React.Fragment key={index}>
+          {wrapWordsWithDictionaryTooltips(child)}
+        </React.Fragment>
+      ));
+    }
+    
+    return content;
+  }, []);
+
+  /* ── Combined processing function ──── */
+  const processLineWithAllTooltips = useCallback((line: string): React.ReactNode => {
+    // First, process with internal translations
+    const translationResult = processLineWithTranslations(line);
+    
+    // Then, wrap remaining words with external dictionary tooltips
+    return wrapWordsWithDictionaryTooltips(translationResult);
+  }, [processLineWithTranslations, wrapWordsWithDictionaryTooltips]);
+
   /* ── framer‑motion variants ───────────────────────────────── */
   const lineVariants = {
     hidden: { opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 10 },
@@ -357,7 +418,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
                 script === 'devanagari' ? 'hindi' : 'roman'
               }`}
             >
-              {processLineWithTranslations(line)}
+              {processLineWithAllTooltips(line)}
             </motion.p>
           ))}
         </div>
