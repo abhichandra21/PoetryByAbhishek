@@ -7,6 +7,7 @@ import { useScriptPreference } from './ScriptPreference'
 import poems from '../data/poems.json'
 import type { Poem } from '../types'
 import allTranslations, { romanToDevanagariMap } from '../translations/poemTranslations'
+import { useSEO } from '../hooks/useSEO'
 
 const devToRomanMap: Record<string, string> = {}
 Object.entries(allTranslations).forEach(([dev, val]) => {
@@ -99,6 +100,48 @@ const PoemIndex = () => {
       }
     }
   }
+
+  // Generate structured data for the collection
+  const generateCollectionStructuredData = () => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "CreativeWorkSeries",
+      "name": "Poetry by Abhishek - Hindi Poetry Collection",
+      "author": {
+        "@type": "Person",
+        "name": "Abhishek Chandra",
+        "url": "https://poetrybyabhishek.netlify.app/about"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Poetry by Abhishek",
+        "url": "https://poetrybyabhishek.netlify.app"
+      },
+      "inLanguage": "hi",
+      "genre": "Poetry",
+      "description": "A collection of original Hindi poems by Abhishek Chandra, featuring bilingual text with both Devanagari and romanized scripts.",
+      "numberOfItems": poems.length,
+      "hasPart": poems.map(poem => ({
+        "@type": "CreativeWork",
+        "name": poem.title,
+        "url": `https://poetrybyabhishek.netlify.app/poem/${poem.id}`,
+        "inLanguage": "hi"
+      }))
+    }
+  }
+
+  // SEO optimization for the index page
+  useSEO({
+    title: activeTag ? `Poems tagged with "${activeTag}"` : searchQuery ? `Search results for "${searchQuery}"` : "Hindi Poetry Collection",
+    description: activeTag 
+      ? `Browse Hindi poems tagged with "${activeTag}" by Abhishek Chandra. Original poetry with bilingual text support.`
+      : searchQuery 
+        ? `Search results for "${searchQuery}" in Abhishek Chandra's Hindi poetry collection.`
+        : "Browse the complete collection of original Hindi poems by Abhishek Chandra. Features bilingual text with both Devanagari and romanized scripts.",
+    keywords: `Hindi poetry, Abhishek Chandra, poetry collection, bilingual poems, Devanagari, romanized Hindi${activeTag ? `, ${activeTag}` : ''}${searchQuery ? `, ${searchQuery}` : ''}`,
+    canonicalUrl: "https://poetrybyabhishek.netlify.app/",
+    structuredData: generateCollectionStructuredData()
+  })
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">

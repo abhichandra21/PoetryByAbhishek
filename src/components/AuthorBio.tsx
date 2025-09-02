@@ -1,7 +1,33 @@
 // src/components/AuthorBio.tsx
 import { motion } from 'framer-motion'
+import { useSEO } from '../hooks/useSEO'
 
 const AuthorBio = () => {
+  // SEO optimization for author page
+  useSEO({
+    title: "About Abhishek Chandra - Hindi Poet & Software Engineer",
+    description: "Learn about Abhishek Chandra, a Hindi poet and software engineer. Discover his journey, inspiration, and passion for creating bilingual poetry that bridges cultures and languages.",
+    keywords: "Abhishek Chandra, Hindi poet, software engineer, poet biography, Indian poet, bilingual poetry, Hindi literature",
+    canonicalUrl: "https://poetrybyabhishek.netlify.app/about",
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Abhishek Chandra",
+      "jobTitle": ["Poet", "Software Engineer"],
+      "description": "Hindi poet and software engineer creating bilingual poetry",
+      "url": "https://poetrybyabhishek.netlify.app/about",
+      "sameAs": [
+        "https://poetrybyabhishek.netlify.app"
+      ],
+      "knows": ["Hindi poetry", "Software development", "Bilingual literature"],
+      "nationality": "Indian",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Poetry by Abhishek"
+      }
+    }
+  })
+
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
@@ -22,6 +48,22 @@ const AuthorBio = () => {
           transition={{ delay: 0.1 }}
           className="text-center mb-12"
         >
+          {/* Author Photo */}
+          <motion.div
+            variants={fadeInUp}
+            transition={{ delay: 0.15 }}
+            className="mb-8 flex justify-center"
+          >
+            <div className="relative">
+              <img
+                src="/author-photo.jpg"
+                alt="Abhishek Chandra"
+                className="w-48 h-48 md:w-56 md:h-56 object-cover rounded-full shadow-lg border-4 border-paper-accent dark:border-paper-dark-accent"
+              />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-accent-light/10 to-transparent dark:from-accent-dark/10"></div>
+            </div>
+          </motion.div>
+          
           <h1 className="text-3xl md:text-4xl font-bold hindi text-accent-light dark:text-accent-dark mb-2">
             Abhishek Chandra/अभिषेक चन्द्रा
           </h1>

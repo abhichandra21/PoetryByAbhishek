@@ -5,6 +5,7 @@ import PoemPage from './PoemPage.tsx'
 import Navigation from './Navigation.tsx'
 import poems from '../data/poems.json'
 import { trackPoemView } from '../lib/analytics'
+import { useSEO } from '../hooks/useSEO'
 
 const PoemBook = () => {
   const { id } = useParams()
@@ -38,6 +39,54 @@ const PoemBook = () => {
   useEffect(() => {
     trackPoemView(currentPoem.id)
   }, [currentPoem.id])
+
+  // Generate structured data for the poem
+  const generateStructuredData = () => {
+    if (!currentPoem) return null
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      "@id": `https://poetrybyabhishek.netlify.app/poem/${currentPoem.id}`,
+      "name": currentPoem.title,
+      "alternativeHeadline": currentPoem.romanizedTitle,
+      "author": {
+        "@type": "Person",
+        "name": "Abhishek Chandra",
+        "url": "https://poetrybyabhishek.netlify.app/about"
+      },
+      "creator": {
+        "@type": "Person",
+        "name": "Abhishek Chandra"
+      },
+      "inLanguage": "hi",
+      "text": currentPoem.lines.join(' '),
+      "genre": "Poetry",
+      "keywords": currentPoem.tags?.join(', '),
+      "datePublished": (currentPoem as any).dateWritten || currentPoem.date || new Date().toISOString().split('T')[0],
+      "publisher": {
+        "@type": "Organization",
+        "name": "Poetry by Abhishek",
+        "url": "https://poetrybyabhishek.netlify.app"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": `https://poetrybyabhishek.netlify.app/poem/${currentPoem.id}`
+      }
+    }
+  }
+
+  // SEO optimization for individual poems
+  useSEO({
+    title: `${currentPoem.title} - Hindi Poetry`,
+    description: `Read "${currentPoem.title}" (${currentPoem.romanizedTitle}) - A beautiful Hindi poem by Abhishek Chandra. Part of a collection of original Hindi poetry.`,
+    keywords: `Hindi poetry, ${currentPoem.title}, ${currentPoem.romanizedTitle}, Abhishek Chandra, ${currentPoem.tags?.join(', ')}`,
+    canonicalUrl: `https://poetrybyabhishek.netlify.app/poem/${currentPoem.id}`,
+    ogTitle: `${currentPoem.title} | Poetry by Abhishek`,
+    ogDescription: `Read this beautiful Hindi poem "${currentPoem.title}" by Abhishek Chandra. Original Hindi poetry with romanized text.`,
+    ogType: 'article',
+    structuredData: generateStructuredData()
+  })
   
   const goToPrevious = () => {
     if (currentIndex > 0) {

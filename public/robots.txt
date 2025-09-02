@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# Main sitemap
+Sitemap: https://poetrybyabhishek.netlify.app/sitemap.xml
+
+# Crawl delay (optional, adjust as needed)
+Crawl-delay: 1
+
+# Allow common SEO bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Block specific paths if needed (currently none)
+# Disallow: /admin/
+# Disallow: /private/
