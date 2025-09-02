@@ -141,6 +141,30 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "अर्ज़-ए-हाल": { meaning: "statement of one's condition", roman: "arz-e-haal" },
     "इत्मीनान-ए-दिल": { meaning: "peace of heart, contentment", roman: "itminaan-e-dil" },
     "बे-मलाल": { meaning: "without regret", roman: "be-malaal" },
+
+    // New Poems
+    "मकां": { meaning: "house, abode", roman: "makaan" },
+    "क़ैद": { meaning: "imprisoned, captive", roman: "qaid" },
+    "दर-ओ-दीवार": { meaning: "doors and walls", roman: "dar-o-deewar" },
+    "हम-सुख़न": { meaning: "confidant, someone to talk to", roman: "hum-sukhan" },
+    "रोशनदान": { meaning: "ventilator, skylight", roman: "roshandaan" },
+    "दहलीज़": { meaning: "threshold, doorstep", roman: "dehleez" },
+    "लांघ": { meaning: "to cross, to leap over", roman: "laangh" },
+    "वीरानी": { meaning: "desolation, loneliness", roman: "veerani" },
+    "घनघोर": { meaning: "dense, thick, intense", roman: "ghanghor" },
+    "जकड़": { meaning: "to grip, to hold tightly", roman: "jakad" },
+    "ग़ूंचे": { meaning: "bud, blossom", roman: "ghoonche" },
+    "परछाईं": { meaning: "shadow, reflection", roman: "parchhain" },
+    "ठहरी": { meaning: "still, stationary", roman: "thehri" },
+    "क़र्ज़": { meaning: "debt", roman: "qarza" },
+    "शख़्स": { meaning: "person, individual", roman: "shakhs" },
+    "फ़िक्र": { meaning: "worry, concern", roman: "fikr" },
+    "लब": { meaning: "lips", roman: "lab" },
+    "ठेस": { meaning: "hurt, injury (emotional)", roman: "thes" },
+    "बिखर": { meaning: "to scatter, to disperse", roman: "bikhar" },
+    "इल्ज़ाम": { meaning: "accusation, blame", roman: "ilzaam" },
+    "परेशां": { meaning: "troubled, distressed", roman: "pareshaan" },
+    "यक़ीन": { meaning: "trust, belief, faith", roman: "yaqeen" },
   };
 
 // Create a reverse mapping from Roman to Devanagari
