@@ -383,13 +383,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-paper-accent to-paper-light dark:from-paper-dark-accent dark:to-paper-dark rounded-xl shadow-book -z-10" />
 
       {/* main content box */}
-      <div className="relative bg-paper-light dark:bg-paper-dark rounded-xl p-6 md:p-12 shadow-medium border border-ink-light/5 dark:border-ink-dark/5">
-        {/* decorative corner */}
-        <div className="absolute top-4 right-4 w-16 h-16 opacity-5 dark:opacity-10">
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            <path d="M0,100 Q50,0 100,0 L100,100 Z" fill="currentColor" />
-          </svg>
-        </div>
+      <div className="relative bg-notebook-paper dark:bg-notebook-paper-dark rounded-xl p-6 md:p-12 shadow-medium">
 
         {/* Like button - positioned prominently at the top */}
         {/* Removed - now in controls bar */}
@@ -405,22 +399,28 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
           <span className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-0.5 bg-gradient-to-r from-accent-light dark:from-accent-dark to-transparent opacity-50" />
         </motion.h1>
 
-        {/* lines */}
-        <div className="space-y-3 md:space-y-4">
-          {displayLines.map((line, i) => (
-            <motion.p
-              key={`${poem.id}-${i}`}
-              custom={i}
-              variants={lineVariants}
-              initial="hidden"
-              animate="visible"
-              className={`${textSizeClass} text-ink-light dark:text-ink-dark indent-4 ${
-                script === 'devanagari' ? 'hindi' : 'roman'
-              }`}
-            >
-              {processLineWithAllTooltips(line)}
-            </motion.p>
-          ))}
+        {/* lines with notebook background */}
+        <div className="relative poem-content">
+          {/* Notebook lines background - only for poem content */}
+          <div className="absolute inset-0 notebook-lines-bg pointer-events-none"></div>
+
+          <div className="relative" style={{ lineHeight: '1.5rem' }}>
+            {displayLines.map((line, i) => (
+              <motion.p
+                key={`${poem.id}-${i}`}
+                custom={i}
+                variants={lineVariants}
+                initial="hidden"
+                animate="visible"
+                className={`${textSizeClass} text-ink-light dark:text-ink-dark indent-4 ${
+                  script === 'devanagari' ? 'hindi' : 'roman'
+                }`}
+                style={{ lineHeight: '1.5rem', marginBottom: '1.5rem' }}
+              >
+                {processLineWithAllTooltips(line)}
+              </motion.p>
+            ))}
+          </div>
         </div>
 
         {/* tags */}
@@ -449,7 +449,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         <PoemComments poemId={poem.id} />
       </div>
 
-      {/* Add CSS variables for tooltip styling */}
+      {/* Add CSS variables for tooltip and notebook styling */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -459,14 +459,26 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
             --tooltip-text-secondary: rgba(0, 0, 0, 0.7);
             --tooltip-heading: #333;
             --tooltip-border: rgba(157, 106, 106, 0.6);
+            --notebook-line-color: rgba(139, 111, 91, 0.25);
           }
-          
+
           .dark {
             --tooltip-bg: #1e293b;
             --tooltip-text: #e5e7eb;
             --tooltip-text-secondary: #cbd5e1;
             --tooltip-heading: #f3f4f6;
             --tooltip-border: rgba(209, 154, 154, 0.6);
+            --notebook-line-color: rgba(212, 185, 150, 0.3);
+          }
+          
+          /* Notebook lines background - subtle and elegant */
+          .notebook-lines-bg {
+            background-image:
+              linear-gradient(to bottom, transparent 1.25rem, var(--notebook-line-color) 1.25rem, var(--notebook-line-color) calc(1.25rem + 1px), transparent calc(1.25rem + 1px));
+            background-size: 100% 1.5rem;
+            background-position: 0 0;
+            background-repeat: repeat-y;
+            opacity: 0.7;
           }
           
           @media print {
@@ -474,6 +486,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
             article{box-shadow:none!important;margin:0!important;padding:20px!important;max-width:100%!important}
             .bg-gradient-to-br{display:none!important}
             .border{border:none!important}
+            .notebook-lines::before{display:none!important}
           }`,
         }}
       />
