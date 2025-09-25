@@ -1,5 +1,5 @@
 // src/components/ScriptToggle.tsx
-import { useScriptPreference } from './ScriptPreference';
+import { useScriptPreference } from '../hooks/useScriptPreference';
 
 interface ScriptToggleProps {
   className?: string;

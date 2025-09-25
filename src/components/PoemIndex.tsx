@@ -3,7 +3,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import ScriptToggle from './ScriptToggle'
-import { useScriptPreference } from './ScriptPreference'
+import { useScriptPreference } from '../hooks/useScriptPreference';
 import poems from '../data/poems.json'
 import type { Poem } from '../types'
 import allTranslations, { romanToDevanagariMap } from '../translations/poemTranslations'
@@ -32,14 +32,14 @@ const PoemIndex = () => {
     const tag = params.get('tag')
     setSearchQuery(q)
     setActiveTag(tag)
-  }, [])
+  }, [location.search])
 
   useEffect(() => {
     const params = new URLSearchParams()
     if (searchQuery) params.set('q', searchQuery)
     if (activeTag) params.set('tag', activeTag)
     navigate({ search: params.toString() }, { replace: true })
-  }, [searchQuery, activeTag])
+  }, [searchQuery, activeTag, navigate])
 
   // Filter poems based on search query and active tag
   const filteredPoems = useMemo(() => {

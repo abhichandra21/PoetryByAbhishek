@@ -1,7 +1,7 @@
 // Prefer the Vite provided env var when available but fall back to process.env
 // so the utilities can run in Node contexts like tests or scripts.
 const GA_MEASUREMENT_ID =
-  (import.meta as any).env?.VITE_GA_MEASUREMENT_ID ||
+  import.meta.env?.VITE_GA_MEASUREMENT_ID ||
   process.env.VITE_GA_MEASUREMENT_ID ||
   ''
 

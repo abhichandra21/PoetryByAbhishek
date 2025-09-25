@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import PoemPage from './PoemPage.tsx'
@@ -63,7 +63,7 @@ const PoemBook = () => {
       "text": currentPoem.lines.join(' '),
       "genre": "Poetry",
       "keywords": currentPoem.tags?.join(', '),
-      "datePublished": (currentPoem as any).dateWritten || currentPoem.date || new Date().toISOString().split('T')[0],
+      "datePublished": currentPoem.date || new Date().toISOString().split('T')[0],
       "publisher": {
         "@type": "Organization",
         "name": "Poetry by Abhishek",
@@ -88,19 +88,19 @@ const PoemBook = () => {
     structuredData: generateStructuredData()
   })
   
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     if (currentIndex > 0) {
       setDirection(-1)
       setCurrentIndex(currentIndex - 1)
     }
-  }
+  }, [currentIndex])
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     if (currentIndex < poemList.length - 1) {
       setDirection(1)
       setCurrentIndex(currentIndex + 1)
     }
-  }
+  }, [currentIndex, poemList.length])
 
   // Swipe support for mobile devices
   useEffect(() => {
@@ -131,7 +131,7 @@ const PoemBook = () => {
       window.removeEventListener('touchstart', handleStart)
       window.removeEventListener('touchend', handleEnd)
     }
-  }, [currentIndex])
+  }, [currentIndex, goToNext, goToPrevious])
   
   const pageVariants = {
     enter: (direction: number) => ({

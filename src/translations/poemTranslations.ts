@@ -150,7 +150,6 @@ export type TranslationDictionary = Record<string, WordTranslation>;
     "रोशनदान": { meaning: "ventilator, skylight", roman: "roshandaan" },
     "दहलीज़": { meaning: "threshold, doorstep", roman: "dehleez" },
     "लांघ": { meaning: "to cross, to leap over", roman: "laangh" },
-    "वीरानी": { meaning: "desolation, loneliness", roman: "veerani" },
     "घनघोर": { meaning: "dense, thick, intense", roman: "ghanghor" },
     "जकड़": { meaning: "to grip, to hold tightly", roman: "jakad" },
     "ग़ूंचे": { meaning: "bud, blossom", roman: "ghoonche" },

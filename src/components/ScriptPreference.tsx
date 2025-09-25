@@ -1,20 +1,10 @@
 // src/components/ScriptPreference.tsx (updated)
 import {
-  createContext,
-  useContext,
   useState,
   useEffect,
   type ReactNode,
 } from 'react';
-
-export type ScriptType = 'devanagari' | 'roman';
-
-interface ScriptContextType {
-  script: ScriptType;
-  setScript: (newScript: ScriptType) => void;
-}
-
-const ScriptContext = createContext<ScriptContextType | null>(null);
+import { ScriptContext, type ScriptType } from '../hooks/useScriptPreference';
 
 export const ScriptPreferenceProvider = ({ children }: { children: ReactNode }) => {
   const [script, setScript] = useState<ScriptType>('devanagari');
@@ -37,12 +27,4 @@ export const ScriptPreferenceProvider = ({ children }: { children: ReactNode }) 
       {children}
     </ScriptContext.Provider>
   );
-};
-
-export const useScriptPreference = () => {
-  const context = useContext(ScriptContext);
-  if (!context) {
-    throw new Error('useScriptPreference must be used within a ScriptPreferenceProvider');
-  }
-  return context;
 };

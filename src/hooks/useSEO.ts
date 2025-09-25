@@ -96,7 +96,7 @@ export const useSEO = ({
 
     // Add structured data
     if (structuredData) {
-      let scriptElement = document.querySelector('script[type="application/ld+json"]')
+      const scriptElement = document.querySelector('script[type="application/ld+json"]')
       
       if (scriptElement) {
         scriptElement.textContent = JSON.stringify(structuredData)

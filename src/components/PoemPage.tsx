@@ -10,7 +10,7 @@ import React, {
 import { motion, useReducedMotion } from 'framer-motion';
 import type { Poem } from '../types';
 import ScriptToggle from './ScriptToggle';
-import { useScriptPreference } from './ScriptPreference';
+import { useScriptPreference } from '../hooks/useScriptPreference';
 import PoemComments from './PoemComments';
 import PoemLike from './PoemLike'; // Add this import
 import TranslationTooltip from './TranslationTooltip';
@@ -273,7 +273,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
       
       if (content.props && typeof content.props === 'object' && 'children' in content.props) {
         const props = content.props as { children: React.ReactNode };
-        return React.cloneElement(content as React.ReactElement<any>, {
+        return React.cloneElement(content as React.ReactElement<{ children: React.ReactNode }>, {
           ...content.props,
           children: wrapWordsWithDictionaryTooltips(props.children)
         });
