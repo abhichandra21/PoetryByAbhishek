@@ -459,7 +459,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
             --tooltip-text-secondary: rgba(0, 0, 0, 0.7);
             --tooltip-heading: #333;
             --tooltip-border: rgba(157, 106, 106, 0.6);
-            --notebook-line-color: rgba(0, 0, 0, 0.15);
+            --notebook-line-color: rgba(139, 111, 91, 0.25);
           }
 
           .dark {
@@ -468,7 +468,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
             --tooltip-text-secondary: #cbd5e1;
             --tooltip-heading: #f3f4f6;
             --tooltip-border: rgba(209, 154, 154, 0.6);
-            --notebook-line-color: rgba(200, 200, 200, 0.25);
+            --notebook-line-color: rgba(212, 185, 150, 0.3);
           }
           
           /* Notebook lines background - subtle and elegant */
@@ -478,7 +478,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
             background-size: 100% 1.5rem;
             background-position: 0 0;
             background-repeat: repeat-y;
-            opacity: 0.8;
+            opacity: 0.7;
           }
           
           @media print {
