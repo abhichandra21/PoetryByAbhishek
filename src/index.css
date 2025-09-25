@@ -44,6 +44,14 @@
     @apply leading-normal md:leading-relaxed;
     text-rendering: optimizeLegibility;
   }
+  
+  .bg-notebook-paper {
+    background-color: #f9f5f1; /* Off-white paper color */
+  }
+  
+  .dark .bg-notebook-paper-dark {
+    background-color: #1e1b18; /* Dark mode paper color */
+  }
     
   .icon {
       width: auto;
