@@ -105,189 +105,53 @@ const fetchFromRekhta = async (word: string): Promise<WordMeaning | null> => {
   }
 };
 
-// Fallback to Free Dictionary API (English definitions)
-const fetchFromFreeDictionary = async (word: string): Promise<WordMeaning | null> => {
-  try {
-    // Use proxy in development, direct API in production
-    const isDev = import.meta.env.DEV;
-    const apiUrl = isDev 
-      ? `/api/dictionary/${encodeURIComponent(word)}`
-      : `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`;
-    
-    const response = await fetch(apiUrl);
-    
-    if (!response.ok) throw new Error('Free Dictionary API failed');
+// Note: Removed English-only dictionary APIs (Wiktionary, Free Dictionary)
+// since all searches will be for Hindi/Urdu words
 
-    const data = await response.json();
-    
-    if (Array.isArray(data) && data.length > 0) {
-      const entry = data[0];
-      const firstMeaning = entry.meanings?.[0];
-      const definition = firstMeaning?.definitions?.[0];
-      
-      return {
-        word: entry.word,
-        meaning: definition?.definition || 'No definition available',
-        etymology: entry.etymology || undefined,
-        examples: definition?.example ? [definition.example] : undefined,
-        partOfSpeech: firstMeaning?.partOfSpeech,
-        source: 'Free Dictionary API'
-      };
-    }
-  } catch (error) {
-    console.warn('Free Dictionary API failed:', error);
-  }
-  return null;
-};
-
-// Basic dictionary for common Hindi/Urdu words (fallback)
+// Basic dictionary for complex Hindi/Urdu poetry words only
 const basicHindiUrduDictionary: Record<string, WordMeaning> = {
-  // Core emotional words
-  'दिल': { word: 'दिल', meaning: 'heart, mind, soul', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'प्रेम': { word: 'प्रेम', meaning: 'love, affection', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'आँख': { word: 'आँख', meaning: 'eye', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'रात': { word: 'रात', meaning: 'night', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'सुबह': { word: 'सुबह', meaning: 'morning', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  // Complex poetic and literary words only
+  // Complex literary and poetic words
   'ख़्वाब': { word: 'ख़्वाब', meaning: 'dream', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'याद': { word: 'याद', meaning: 'memory, remembrance', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'दर्द': { word: 'दर्द', meaning: 'pain, ache', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'ख़ुशी': { word: 'ख़ुशी', meaning: 'happiness, joy', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'ग़म': { word: 'ग़म', meaning: 'sorrow, grief', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  
-  // Words from your poems
-  'दुनियां': { word: 'दुनियां', meaning: 'world, universe', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'बातें': { word: 'बातें', meaning: 'talks, conversations, things', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'सपने': { word: 'सपने', meaning: 'dreams', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'रातें': { word: 'रातें', meaning: 'nights', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'गुज़री': { word: 'गुज़री', meaning: 'passed, went by', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'गुज़रे': { word: 'गुज़रे', meaning: 'passed, went by', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'दिन': { word: 'दिन', meaning: 'day', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'पल': { word: 'पल', meaning: 'moment, instant', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'खुशियों': { word: 'खुशियों', meaning: 'happiness, joys', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'कलियाँ': { word: 'कलियाँ', meaning: 'buds, young flowers', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'फूल': { word: 'फूल', meaning: 'flower', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'कांटे': { word: 'कांटे', meaning: 'thorns', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'जीवन': { word: 'जीवन', meaning: 'life', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'पथ': { word: 'पथ', meaning: 'path, way', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'यादें': { word: 'यादें', meaning: 'memories', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'हार': { word: 'हार', meaning: 'garland, necklace; defeat', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'हालातों': { word: 'हालातों', meaning: 'conditions, circumstances', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'पलकें': { word: 'पलकें', meaning: 'eyelids', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'बूंदें': { word: 'बूंदें', meaning: 'drops (of rain)', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'बरसातें': { word: 'बरसातें', meaning: 'rainy seasons', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'घर': { word: 'घर', meaning: 'home, house', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'माँ': { word: 'माँ', meaning: 'mother', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'बहन': { word: 'बहन', meaning: 'sister', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'आवाज़': { word: 'आवाज़', meaning: 'voice, sound', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'नींद': { word: 'नींद', meaning: 'sleep', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'मेरी': { word: 'मेरी', meaning: 'my, mine (feminine)', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'मेरा': { word: 'मेरा', meaning: 'my, mine (masculine)', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'तेरी': { word: 'तेरी', meaning: 'your, yours (feminine)', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'तेरा': { word: 'तेरा', meaning: 'your, yours (masculine)', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'कैसा': { word: 'कैसा', meaning: 'how, what kind of', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'कैसी': { word: 'कैसी', meaning: 'how, what kind of (feminine)', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'रहा': { word: 'रहा', meaning: 'was, remained', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'आज': { word: 'आज', meaning: 'today', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
   'ढल': { word: 'ढल', meaning: 'slope, decline', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'जाएगी': { word: 'जाएगी', meaning: 'will go (feminine)', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'सौ': { word: 'सौ', meaning: 'hundred', partOfSpeech: 'number', source: 'Basic Dictionary' },
-  'कुछ': { word: 'कुछ', meaning: 'some, something', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'और': { word: 'और', meaning: 'and, more', partOfSpeech: 'conjunction', source: 'Basic Dictionary' },
-  'भी': { word: 'भी', meaning: 'also, too', partOfSpeech: 'particle', source: 'Basic Dictionary' },
-  'में': { word: 'में', meaning: 'in, within', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'पर': { word: 'पर', meaning: 'on, at, but', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'से': { word: 'से', meaning: 'from, with, by', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'को': { word: 'को', meaning: 'to, for (object marker)', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'का': { word: 'का', meaning: 'of, belonging to (masculine)', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'की': { word: 'की', meaning: 'of, belonging to (feminine)', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'के': { word: 'के', meaning: 'of, belonging to (oblique)', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'हैं': { word: 'हैं', meaning: 'are, is (plural)', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'है': { word: 'है', meaning: 'is, are', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'था': { word: 'था', meaning: 'was (masculine)', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'थी': { word: 'थी', meaning: 'was (feminine)', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'थे': { word: 'थे', meaning: 'were (plural)', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'हम': { word: 'हम', meaning: 'we, us', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'तुम': { word: 'तुम', meaning: 'you', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'वो': { word: 'वो', meaning: 'that, he/she/it', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'यह': { word: 'यह', meaning: 'this', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'ये': { word: 'ये', meaning: 'these', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'जो': { word: 'जो', meaning: 'who, which, that', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'बात': { word: 'बात', meaning: 'matter, thing, talk', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'क्या': { word: 'क्या', meaning: 'what', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'कौन': { word: 'कौन', meaning: 'who', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'कहाँ': { word: 'कहाँ', meaning: 'where', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'कब': { word: 'कब', meaning: 'when', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'क्यों': { word: 'क्यों', meaning: 'why', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'अब': { word: 'अब', meaning: 'now', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'तो': { word: 'तो', meaning: 'then, so', partOfSpeech: 'particle', source: 'Basic Dictionary' },
-  'फिर': { word: 'फिर', meaning: 'again, then', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
   'जगाए': { word: 'जगाए', meaning: 'wake up, awaken', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'ना': { word: 'ना', meaning: 'no, not', partOfSpeech: 'particle', source: 'Basic Dictionary' },
-  'नहीं': { word: 'नहीं', meaning: 'no, not', partOfSpeech: 'particle', source: 'Basic Dictionary' },
-  'कोई': { word: 'कोई', meaning: 'someone, anyone, any', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
   
-  // Romanized versions
+  // Complex poetic and literary terms (Romanized)
   'ishq': { word: 'ishq', meaning: 'passionate love, divine love', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'mohabbat': { word: 'mohabbat', meaning: 'love, affection', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'dil': { word: 'dil', meaning: 'heart, mind, soul', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'raat': { word: 'raat', meaning: 'night', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'subah': { word: 'subah', meaning: 'morning', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'khwab': { word: 'khwab', meaning: 'dream', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'yaad': { word: 'yaad', meaning: 'memory, remembrance', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'dard': { word: 'dard', meaning: 'pain, ache', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'khushi': { word: 'khushi', meaning: 'happiness, joy', partOfSpeech: 'noun', source: 'Basic Dictionary' },
   'gham': { word: 'gham', meaning: 'sorrow, grief', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'duniyaan': { word: 'duniyaan', meaning: 'world, universe', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'baaten': { word: 'baaten', meaning: 'talks, conversations, things', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'sapane': { word: 'sapane', meaning: 'dreams', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'raaten': { word: 'raaten', meaning: 'nights', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'ghar': { word: 'ghar', meaning: 'home, house', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'maa': { word: 'maa', meaning: 'mother', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'behan': { word: 'behan', meaning: 'sister', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'aawaz': { word: 'aawaz', meaning: 'voice, sound', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'neend': { word: 'neend', meaning: 'sleep', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'meri': { word: 'meri', meaning: 'my, mine (feminine)', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'mera': { word: 'mera', meaning: 'my, mine (masculine)', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'teri': { word: 'teri', meaning: 'your, yours (feminine)', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'tera': { word: 'tera', meaning: 'your, yours (masculine)', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'kaisa': { word: 'kaisa', meaning: 'how, what kind of', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'kaisi': { word: 'kaisi', meaning: 'how, what kind of (feminine)', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'din': { word: 'din', meaning: 'day', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'aaj': { word: 'aaj', meaning: 'today', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'sau': { word: 'sau', meaning: 'hundred', partOfSpeech: 'number', source: 'Basic Dictionary' },
-  'kuch': { word: 'kuch', meaning: 'some, something', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'aur': { word: 'aur', meaning: 'and, more', partOfSpeech: 'conjunction', source: 'Basic Dictionary' },
-  'bhi': { word: 'bhi', meaning: 'also, too', partOfSpeech: 'particle', source: 'Basic Dictionary' },
-  'men': { word: 'men', meaning: 'in, within', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'par': { word: 'par', meaning: 'on, at, but', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'se': { word: 'se', meaning: 'from, with, by', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'ko': { word: 'ko', meaning: 'to, for (object marker)', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'ka': { word: 'ka', meaning: 'of, belonging to (masculine)', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'ki': { word: 'ki', meaning: 'of, belonging to (feminine)', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'ke': { word: 'ke', meaning: 'of, belonging to (oblique)', partOfSpeech: 'postposition', source: 'Basic Dictionary' },
-  'hain': { word: 'hain', meaning: 'are, is (plural)', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'hai': { word: 'hai', meaning: 'is, are', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'tha': { word: 'tha', meaning: 'was (masculine)', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'thi': { word: 'thi', meaning: 'was (feminine)', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'the': { word: 'the', meaning: 'were (plural)', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'ham': { word: 'ham', meaning: 'we, us', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'tum': { word: 'tum', meaning: 'you', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'vo': { word: 'vo', meaning: 'that, he/she/it', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'yah': { word: 'yah', meaning: 'this', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'ye': { word: 'ye', meaning: 'these', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'jo': { word: 'jo', meaning: 'who, which, that', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'baat': { word: 'baat', meaning: 'matter, thing, talk', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'kya': { word: 'kya', meaning: 'what', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'kaun': { word: 'kaun', meaning: 'who', partOfSpeech: 'pronoun', source: 'Basic Dictionary' },
-  'kahan': { word: 'kahan', meaning: 'where', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'kab': { word: 'kab', meaning: 'when', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'kyon': { word: 'kyon', meaning: 'why', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'ab': { word: 'ab', meaning: 'now', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'to': { word: 'to', meaning: 'then, so', partOfSpeech: 'particle', source: 'Basic Dictionary' },
-  'phir': { word: 'phir', meaning: 'again, then', partOfSpeech: 'adverb', source: 'Basic Dictionary' },
-  'na': { word: 'na', meaning: 'no, not', partOfSpeech: 'particle', source: 'Basic Dictionary' },
-  'nahin': { word: 'nahin', meaning: 'no, not', partOfSpeech: 'particle', source: 'Basic Dictionary' },
-  'koi': { word: 'koi', meaning: 'someone, anyone, any', partOfSpeech: 'pronoun', source: 'Basic Dictionary' }
+  'chandan': { word: 'chandan', meaning: 'sandalwood', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'gulab': { word: 'gulab', meaning: 'rose', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'chameli': { word: 'chameli', meaning: 'jasmine', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'chandni': { word: 'chandni', meaning: 'moonlight', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'sitara': { word: 'sitara', meaning: 'star', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'sitare': { word: 'sitare', meaning: 'stars', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'saawan': { word: 'saawan', meaning: 'monsoon season', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'basant': { word: 'basant', meaning: 'spring season', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+
+  // Additional complex literary terms
+  'nazm': { word: 'nazm', meaning: 'poem, verse', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'ghazal': { word: 'ghazal', meaning: 'lyrical poetry form', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'sher': { word: 'sher', meaning: 'couplet, verse', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'matla': { word: 'matla', meaning: 'opening couplet of ghazal', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'maqta': { word: 'maqta', meaning: 'final couplet containing poet\'s name', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'husn': { word: 'husn', meaning: 'beauty', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'junoon': { word: 'junoon', meaning: 'passion, madness', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'intezaar': { word: 'intezaar', meaning: 'waiting, anticipation', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'tanhai': { word: 'tanhai', meaning: 'solitude, loneliness', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'viraag': { word: 'viraag', meaning: 'detachment, separation', partOfSpeech: 'noun', source: 'Basic Dictionary' },
+  'viraha': { word: 'viraha', meaning: 'separation from beloved', partOfSpeech: 'noun', source: 'Basic Dictionary' }
 };
 
 // Try basic dictionary lookup (for common Hindi/Urdu words)
@@ -336,7 +200,7 @@ export const fetchWordMeaning = async (word: string): Promise<DictionaryResponse
     // Try different sources in order of preference
     let meaning: WordMeaning | null = null;
 
-    // 1. Try basic dictionary first (instant results for common words)
+    // 1. Try basic dictionary first (instant results for complex poetic words)
     meaning = await fetchFromBasicDictionary(cleaned);
 
     // 2. Try Rekhta Dictionary via proxy (best for Hindi/Urdu poetry)
@@ -344,10 +208,7 @@ export const fetchWordMeaning = async (word: string): Promise<DictionaryResponse
       meaning = await fetchFromRekhta(cleaned);
     }
 
-    // 3. Try Free Dictionary API (good for English words)
-    if (!meaning) {
-      meaning = await fetchFromFreeDictionary(cleaned);
-    }
+    // Note: Removed English-only dictionary APIs since all searches are Hindi/Urdu
 
     if (meaning) {
       // Cache the result
