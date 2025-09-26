@@ -27,11 +27,11 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode, palette, s
   }
 
   const navItems = [
-    { path: '/', label: 'Index', labelHindi: 'सूची' },
-    { path: '/read', label: 'Read', labelHindi: 'पढ़ें' },
-    { path: '/about', label: 'About', labelHindi: 'परिचय' },
-    { path: '/contact', label: 'Contact', labelHindi: 'संपर्क' },
-    { path: '/subscribe', label: 'Subscribe', labelHindi: 'सदस्यता' },
+    { path: '/', label: 'Index' },
+    { path: '/read', label: 'Read' },
+    { path: '/about', label: 'About' },
+    { path: '/contact', label: 'Contact' },
+    { path: '/subscribe', label: 'Subscribe' },
   ];
 
   const mobileMenu = (
@@ -56,8 +56,7 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode, palette, s
                     : 'text-ink-light-secondary dark:text-ink-dark-secondary hover:bg-paper-accent dark:hover:bg-paper-dark-accent'
                 }`}
               >
-                <span className="hindi text-base">{item.labelHindi}</span>
-                <span className="ml-2 text-sm">({item.label})</span>
+                <span className="text-base font-medium">{item.label}</span>
               </Link>
             ))}
           </nav>
@@ -93,8 +92,7 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode, palette, s
                     : 'text-ink-light-secondary dark:text-ink-dark-secondary hover:text-ink-light dark:hover:text-ink-dark'
                 }`}
               >
-                <span className="hidden lg:inline">{item.label}</span>
-                <span className="lg:hidden hindi">{item.labelHindi}</span>
+                <span>{item.label}</span>
                 {isActive(item.path) && (
                   <motion.div
                     layoutId="activeNav"
@@ -115,7 +113,7 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode, palette, s
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="p-2 rounded-full bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors w-11 h-11 flex items-center justify-center tap-target"
+                  className="px-3 py-2 rounded-full bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors flex items-center gap-2 tap-target"
                   aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
                 >
                   {mobileMenuOpen ? (
@@ -127,6 +125,9 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode, palette, s
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                   )}
+                  <span className="text-sm font-medium text-ink-light dark:text-ink-dark">
+                    {mobileMenuOpen ? 'Close' : 'Menu'}
+                  </span>
                 </motion.button>
               </ActionTooltip>
             </div>
