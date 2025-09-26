@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { fetchWordMeaning, type WordMeaning } from '../lib/dictionary';
 
 interface WordTooltipProps {
@@ -41,9 +41,9 @@ const WordTooltip: FC<WordTooltipProps> = ({
   const cleanWord = word.trim().replace(/[।,;:!?\-"']/g, '');
   
   // Fetch word meaning from external API
-  const fetchMeaning = async (targetWord: string) => {
+  const fetchMeaning = useCallback(async (targetWord: string) => {
     if (!targetWord || loading) return;
-    
+
     setLoading(true);
     setError(null);
     
@@ -72,18 +72,13 @@ const WordTooltip: FC<WordTooltipProps> = ({
       setLoading(false);
       setHasFetched(true);
     }
-  };
+  }, [loading, fallbackMeaning]);
   
   // Handle word click
   const handleWordClick = () => {
     setShowTooltip(!showTooltip);
-    
-    // Only fetch if we don't have meaning and tooltip is being shown
-    if (!hasFetched && !loading && !showTooltip) {
-      fetchMeaning(cleanWord);
-    }
   };
-  
+
   // Update tooltip position based on space available
   useEffect(() => {
     if (showTooltip && tooltipRef.current && wordRef.current) {
@@ -114,6 +109,12 @@ const WordTooltip: FC<WordTooltipProps> = ({
       });
     }
   }, [showTooltip, meaning, prefetchedMeaning, loading]);
+
+  useEffect(() => {
+    if (showTooltip && !hasFetched && !loading) {
+      void fetchMeaning(cleanWord);
+    }
+  }, [showTooltip, hasFetched, loading, cleanWord, fetchMeaning]);
   
   // Close tooltip when clicking outside
   useEffect(() => {
@@ -137,21 +138,19 @@ const WordTooltip: FC<WordTooltipProps> = ({
         className={`dictionary-word cursor-pointer transition-colors duration-200 ${className}`}
         data-has-meaning={resolvedMeaning ? 'true' : 'false'}
         onClick={handleWordClick}
-        onMouseEnter={() => {
-          if (resolvedMeaning && !showTooltip) {
-            setShowTooltip(true);
-          }
-        }}
-        onMouseLeave={() => {
-          if (resolvedMeaning && showTooltip && !loading) {
-            setShowTooltip(false);
-          }
-        }}
         title={cleanWord ? `Click for meaning of "${cleanWord}"` : undefined}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleWordClick();
+          }
+        }}
       >
         {children}
       </span>
-      
+
       {showTooltip && isClient && (
         <div
           ref={tooltipRef}
