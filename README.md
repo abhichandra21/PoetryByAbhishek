@@ -48,3 +48,9 @@ SMTP_USER=your_user
 SMTP_PASS=your_password
 MAIL_FROM="Poetry Bot <bot@example.com>"
 ```
+
+## Appearance & Palette
+
+- The site now defaults to a monochrome palette (paper, ink, and accent shades mapped to greys).
+- The header includes a palette toggle (⬛/🎨) so you can swap between monochrome and the original lavender scheme; the choice persists in `localStorage` under `colorPalette`.
+- Dark mode continues to work for both palettes (stored separately as `darkMode`).

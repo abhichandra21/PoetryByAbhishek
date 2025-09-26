@@ -14,6 +14,7 @@ import { useScriptPreference } from '../hooks/useScriptPreference';
 import PoemComments from './PoemComments';
 import PoemLike from './PoemLike'; // Add this import
 import WordTooltip from './WordTooltip';
+import ActionTooltip from './ActionTooltip';
 import { Link } from 'react-router-dom';
 import type { WordMeaning } from '../lib/dictionary';
 import allPoemTranslations, { romanToDevanagariMap } from '../translations/poemTranslations';
@@ -345,45 +346,49 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         </div>
 
         <div className="flex gap-2">
-          <button
-            onClick={() => setShowLookupHelp((value) => !value)}
-            className="p-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors w-11 h-11 flex items-center justify-center tap-target"
-            aria-label="Toggle word-meaning help"
-            aria-pressed={showLookupHelp}
-          >
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <ActionTooltip label={showLookupHelp ? 'Hide lookup instructions' : 'Show lookup instructions'}>
+            <button
+              onClick={() => setShowLookupHelp((value) => !value)}
+              className="p-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors w-11 h-11 flex items-center justify-center tap-target"
+              aria-label="Toggle word-meaning help"
+              aria-pressed={showLookupHelp}
             >
-              <path d="M12 21a9 9 0 1 0-9-9 9 9 0 0 0 9 9Z" />
-              <path d="M12 8v4" />
-              <path d="m12 16 .01-.01" />
-            </svg>
-          </button>
+              <svg
+                className="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 21a9 9 0 1 0-9-9 9 9 0 0 0 9 9Z" />
+                <path d="M12 8v4" />
+                <path d="m12 16 .01-.01" />
+              </svg>
+            </button>
+          </ActionTooltip>
 
           {/* share */}
           <div className="relative">
-            <button
-              onClick={() => setShowShareMenu(!showShareMenu)}
-              className="p-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors w-11 h-11 flex items-center justify-center tap-target"
-              aria-label="Share poem"
-              aria-haspopup="menu"
-              aria-expanded={showShareMenu}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8.684 13.342a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                />
-              </svg>
-            </button>
+            <ActionTooltip label="Share this poem">
+              <button
+                onClick={() => setShowShareMenu(!showShareMenu)}
+                className="p-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors w-11 h-11 flex items-center justify-center tap-target"
+                aria-label="Share poem"
+                aria-haspopup="menu"
+                aria-expanded={showShareMenu}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8.684 13.342a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                  />
+                </svg>
+              </button>
+            </ActionTooltip>
 
             {showShareMenu && (
               <motion.div
@@ -399,6 +404,11 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
                     onClick={() => handleShare(p)}
                     className="w-full px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 text-left tap-target"
                     role="menuitem"
+                    title={
+                      p === 'copy'
+                        ? 'Copy link to clipboard'
+                        : `Share on ${p.charAt(0).toUpperCase() + p.slice(1)}`
+                    }
                   >
                     {p.charAt(0).toUpperCase() + p.slice(1)}
                   </button>
@@ -408,6 +418,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
                     onClick={() => handleShare('native')}
                     className="w-full px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 text-left tap-target"
                     role="menuitem"
+                    title="Share with more apps"
                   >
                     More…
                   </button>

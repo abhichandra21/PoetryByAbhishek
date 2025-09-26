@@ -1,0 +1,139 @@
+import type { FC, ReactElement, ReactNode } from 'react';
+import { useId, useState, useRef, useEffect, cloneElement, isValidElement } from 'react';
+
+interface ActionTooltipProps {
+  label: string;
+  children: ReactNode;
+  placement?: 'top' | 'bottom';
+}
+
+const ActionTooltip: FC<ActionTooltipProps> = ({ label, children, placement = 'top' }) => {
+  const tooltipId = useId();
+  const [visible, setVisible] = useState(false);
+  const [computedPlacement, setComputedPlacement] = useState<'top' | 'bottom'>(placement);
+  const wrapperRef = useRef<HTMLSpanElement>(null);
+
+  const show = () => setVisible(true);
+  const hide = () => setVisible(false);
+
+  const enhanceChild = (child: ReactElement) => {
+    const {
+      onMouseEnter,
+      onMouseLeave,
+      onFocus,
+      onBlur,
+      ...rest
+    } = child.props as Record<string, unknown>;
+
+    const handleEnter = (event: React.MouseEvent<HTMLElement>) => {
+      show();
+      if (typeof onMouseEnter === 'function') {
+        onMouseEnter(event);
+      }
+    };
+
+    const handleLeave = (event: React.MouseEvent<HTMLElement>) => {
+      hide();
+      if (typeof onMouseLeave === 'function') {
+        onMouseLeave(event);
+      }
+    };
+
+    const handleFocus = (event: React.FocusEvent<HTMLElement>) => {
+      show();
+      if (typeof onFocus === 'function') {
+        onFocus(event);
+      }
+    };
+
+    const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
+      hide();
+      if (typeof onBlur === 'function') {
+        onBlur(event);
+      }
+    };
+
+    return cloneElement(child, {
+      ...rest,
+      onMouseEnter: handleEnter,
+      onMouseLeave: handleLeave,
+      onFocus: handleFocus,
+      onBlur: handleBlur,
+      'aria-describedby': visible ? tooltipId : undefined,
+    });
+  };
+
+  useEffect(() => {
+    if (!visible) {
+      setComputedPlacement(placement);
+      return;
+    }
+
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    const rect = wrapper.getBoundingClientRect();
+    const margin = 18;
+    let nextPlacement: 'top' | 'bottom' = placement;
+
+    if (placement !== 'bottom' && rect.top < margin) {
+      nextPlacement = 'bottom';
+    } else if (placement !== 'top' && rect.bottom + margin > window.innerHeight) {
+      nextPlacement = 'top';
+    }
+
+    if (nextPlacement !== computedPlacement) {
+      setComputedPlacement(nextPlacement);
+    }
+  }, [visible, placement, computedPlacement]);
+
+  return (
+    <span ref={wrapperRef} className="relative inline-flex">
+      {isValidElement(children) ? enhanceChild(children) : children}
+      {visible && (
+        <span
+          role="tooltip"
+          id={tooltipId}
+          className="pointer-events-none select-none"
+          style={{
+            position: 'absolute',
+            zIndex: 60,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            [computedPlacement === 'top' ? 'bottom' : 'top']: 'calc(100% + 10px)',
+            backgroundColor: 'var(--tooltip-bg, #faf6f2)',
+            color: 'var(--tooltip-text, #333)',
+            border: '1px solid rgba(0, 0, 0, 0.08)',
+            borderRadius: '6px',
+            padding: '6px 10px',
+            fontSize: '0.75rem',
+            lineHeight: 1.2,
+            whiteSpace: 'nowrap',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.12)',
+          }}
+        >
+          {label}
+          <span
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              width: '10px',
+              height: '10px',
+              backgroundColor: 'var(--tooltip-bg, #faf6f2)',
+              transform: 'rotate(45deg)',
+              left: '50%',
+              marginLeft: '-5px',
+              [computedPlacement === 'top' ? 'top' : 'bottom']: '100%',
+              borderLeft: computedPlacement === 'top' ? undefined : '1px solid rgba(0, 0, 0, 0.08)',
+              borderTop: computedPlacement === 'top' ? undefined : '1px solid rgba(0, 0, 0, 0.08)',
+              borderRight: computedPlacement === 'top' ? '1px solid rgba(0, 0, 0, 0.08)' : undefined,
+              borderBottom: computedPlacement === 'top' ? '1px solid rgba(0, 0, 0, 0.08)' : undefined,
+            }}
+          />
+        </span>
+      )}
+    </span>
+  );
+};
+
+export default ActionTooltip;

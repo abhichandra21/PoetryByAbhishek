@@ -14,11 +14,18 @@ import Subscribe from './components/Subscribe.tsx'
 import { trackPageView } from './lib/analytics'
 // import DebugEnv from './components/DebugEnv'
 
+type Palette = 'monochrome' | 'original'
+
 function App() {
   const location = useLocation()
   const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem('darkMode')
     return savedMode ? JSON.parse(savedMode) : false
+  })
+
+  const [palette, setPalette] = useState<Palette>(() => {
+    const stored = localStorage.getItem('colorPalette')
+    return stored === 'original' ? 'original' : 'monochrome'
   })
 
   const [isLoading, setIsLoading] = useState(true)
@@ -34,6 +41,14 @@ function App() {
     // Add smooth transition when theme changes
     document.documentElement.style.transition = 'background-color 0.3s ease, color 0.3s ease'
   }, [darkMode])
+
+  useEffect(() => {
+    localStorage.setItem('colorPalette', palette)
+    const root = document.documentElement
+    root.classList.remove('theme-color', 'theme-monochrome')
+    const themeClass = palette === 'original' ? 'theme-color' : 'theme-monochrome'
+    root.classList.add(themeClass)
+  }, [palette])
 
   useEffect(() => {
     // Simulate loading for initial theme setup
@@ -67,7 +82,12 @@ function App() {
       transition={{ duration: 0.4 }}
       className="flex flex-col min-h-screen bg-gradient-to-br from-paper-light to-paper-accent dark:from-paper-dark dark:to-paper-dark-accent transition-colors duration-300"
     >
-      <LayoutHeader darkMode={darkMode} setDarkMode={setDarkMode} />
+      <LayoutHeader
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        palette={palette}
+        setPalette={setPalette}
+      />
       
       <main className="flex-grow flex items-center justify-center px-4 py-8 relative">
         {/*<DebugEnv />*/}
@@ -97,4 +117,3 @@ function App() {
 }
 
 export default App
-

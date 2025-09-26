@@ -4,11 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-- **Development**: `npm run dev` - Start development server
+- **Development**: `npm run dev` - Start development server (includes dictionary freshness check)
 - **Build**: `npm run build` - TypeScript compile and build for production
 - **Lint**: `npm run lint` - Run ESLint
 - **Test**: `npm run test` - Run Vitest tests
 - **Preview**: `npm run preview` - Preview production build
+- **Dictionary Cache**: `npm run generate:dictionary` - Generate dictionary cache for Hindi word tooltips
+- **Dictionary Check**: `npm run check:dictionary` - Check if dictionary cache needs refreshing
+- **Sitemap**: `npm run generate:sitemap` - Generate sitemap for SEO
 
 ## Architecture
 
@@ -22,6 +25,8 @@ This is a React + TypeScript + Vite poetry website with the following key compon
 
 ### Key Features
 - **Bilingual Support**: Poems support both Devanagari and romanized text with script toggle functionality
+- **Dictionary Tooltips**: Hindi word meanings fetched from Wiktionary with fallback to dictionaryapi.dev and manual translations
+- **Palette Toggle**: Monochrome and lavender color schemes with persistent user preference
 - **Interactive Elements**: Comments system, likes, and sharing functionality
 - **Email Subscriptions**: Supabase-powered subscriber management with email notifications
 - **Analytics**: Google Analytics integration via custom utilities in `src/lib/analytics.ts`
@@ -30,7 +35,8 @@ This is a React + TypeScript + Vite poetry website with the following key compon
 - Poems are loaded from `src/data/poems.json` and typed with the `Poem` interface
 - Comments and likes are stored in Supabase with types defined in `src/lib/supabase.ts`
 - Session management for user interactions handled in `src/lib/session.ts`
-- Translation system supports tooltips and script conversion via `src/translations/poemTranslations.ts`
+- Dictionary system: runtime cache → static cache → Wiktionary → dictionaryapi.dev → manual translations
+- Color palette preferences stored in localStorage (`colorPalette` and `darkMode`)
 
 ### Email System
 - New poem notifications sent via `scripts/sendNewPoemEmails.js`
@@ -46,3 +52,10 @@ Required in `.env.local`:
 ### Testing
 - Tests located in `src/lib/__tests__/` using Vitest
 - Focus on analytics and session utilities
+
+## Dictionary Workflow
+
+- After editing `src/data/poems.json`, run `npm run check:dictionary` to verify cache freshness
+- If warned that poems changed more recently than cache, refresh with `npm run generate:dictionary`
+- All builds automatically regenerate the static dictionary cache via prebuild hook
+- Dictionary resolves in order: runtime cache → static cache → Wiktionary → dictionaryapi.dev → manual translations
