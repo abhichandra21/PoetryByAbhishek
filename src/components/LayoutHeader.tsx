@@ -113,7 +113,9 @@ const LayoutHeader: FC<LayoutHeaderProps> = ({ darkMode, setDarkMode, palette, s
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="px-3 py-2 rounded-full bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors flex items-center gap-2 tap-target"
+                  className={`px-3 py-2 rounded-full bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 transition-colors flex items-center gap-2 tap-target z-[70] ${
+                    mobileMenuOpen ? 'fixed top-4 right-4' : 'relative'
+                  }`}
                   aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
                 >
                   {mobileMenuOpen ? (
