@@ -113,7 +113,8 @@ const WordTooltip: FC<WordTooltipProps> = ({
     <span style={{ display: 'inline', position: 'relative' }}>
       <span 
         ref={wordRef}
-        className={`cursor-pointer hover:text-accent-light dark:hover:text-accent-dark transition-colors duration-200 ${className}`}
+        className={`dictionary-word cursor-pointer transition-colors duration-200 ${className}`}
+        data-has-meaning={meaning ? 'true' : 'false'}
         onClick={handleWordClick}
         onMouseEnter={() => {
           if (meaning && !showTooltip) {

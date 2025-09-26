@@ -23,46 +23,56 @@ const cacheTimestamps = new Map<string, number>();
 const cleanWord = (word: string): string => {
   return word.toLowerCase().trim()
     .replace(/[।,;:!?\-"'()[\]{}]/g, '') // Remove punctuation
-    .replace(/\s+/g, '') // Remove all spaces
-    .replace(/़/g, '') // Remove nukta (optional diacritic)
-    .replace(/ँ/g, '') // Remove chandrabindu (optional)
-    .replace(/ं/g, '') // Remove anusvara (optional)
-    .replace(/्/g, ''); // Remove virama (optional)
+    .replace(/\s+/g, ''); // Remove all spaces
 };
 
-// Normalize word for better matching (try multiple variations)
-const normalizeWord = (word: string): string[] => {
-  const cleaned = cleanWord(word);
-  const variations = [cleaned];
-  
-  // Add common variations
-  if (cleaned.endsWith('ों')) {
-    variations.push(cleaned.slice(0, -2)); // Remove plural ending
-    variations.push(cleaned.slice(0, -2) + 'ा'); // Try singular masculine
-    variations.push(cleaned.slice(0, -2) + 'ी'); // Try singular feminine
+// Convert HTML strings from Wiktionary responses into readable text
+const decodeHtmlEntities = (value: string): string => {
+  if (typeof document !== 'undefined') {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = value;
+    return textarea.value;
   }
-  
-  if (cleaned.endsWith('ें')) {
-    variations.push(cleaned.slice(0, -2)); // Remove plural ending
-    variations.push(cleaned.slice(0, -2) + 'ा'); // Try singular
+
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ');
+};
+
+const sanitizeRichText = (value: unknown): string | null => {
+  if (typeof value !== 'string') return null;
+
+  const withoutTags = value.replace(/<[^>]*>/g, ' ');
+  const decoded = decodeHtmlEntities(withoutTags);
+  const compact = decoded.replace(/\s+/g, ' ').trim();
+
+  return compact.length > 0 ? compact : null;
+};
+
+const extractInflectionTarget = (definitionMarkup: string): string | null => {
+  if (!definitionMarkup || typeof definitionMarkup !== 'string') {
+    return null;
   }
-  
-  if (cleaned.endsWith('ी')) {
-    variations.push(cleaned.slice(0, -1)); // Remove feminine ending
-    variations.push(cleaned.slice(0, -1) + 'ा'); // Try masculine
+
+  if (!definitionMarkup.includes('form-of-definition')) {
+    return null;
   }
-  
-  if (cleaned.endsWith('ा')) {
-    variations.push(cleaned.slice(0, -1)); // Remove masculine ending
-    variations.push(cleaned.slice(0, -1) + 'ी'); // Try feminine
+
+  const targetMatch = definitionMarkup.match(/form-of-definition-link[^>]*>[^]*?href="\/wiki\/([^"#?]+)(?:#[^"]*)?"/);
+  if (!targetMatch) {
+    return null;
   }
-  
-  if (cleaned.endsWith('े')) {
-    variations.push(cleaned.slice(0, -1)); // Remove oblique ending
-    variations.push(cleaned.slice(0, -1) + 'ा'); // Try direct
+
+  const decodedTarget = decodeURIComponent(targetMatch[1]).replace(/_/g, ' ').trim();
+  if (!decodedTarget) {
+    return null;
   }
-  
-  return [...new Set(variations)]; // Remove duplicates
+
+  return decodedTarget;
 };
 
 // Check if cached result is still valid
@@ -72,13 +82,16 @@ const isCacheValid = (word: string): boolean => {
   return Date.now() - timestamp < CACHE_DURATION;
 };
 
-// Try Rekhta Dictionary API via proxy (best for Urdu/Hindi poetry)
-const fetchFromRekhta = async (word: string): Promise<WordMeaning | null> => {
+// Try Wiktionary REST API (best lexical coverage, includes Hindi/Urdu)
+const fetchFromWiktionary = async (word: string, visited = new Set<string>()): Promise<WordMeaning | null> => {
+  if (visited.has(word)) {
+    return null;
+  }
+  visited.add(word);
+
   try {
-    // Check if proxy server is available (you can deploy rekhta-proxy.js)
-    const proxyUrl = process.env.REACT_APP_REKHTA_PROXY_URL || 'http://localhost:3001';
-    
-    const response = await fetch(`${proxyUrl}/api/rekhta/${encodeURIComponent(word)}`, {
+    const apiUrl = `https://en.wiktionary.org/api/rest_v1/page/definition/${encodeURIComponent(word)}`;
+    const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json'
@@ -86,100 +99,151 @@ const fetchFromRekhta = async (word: string): Promise<WordMeaning | null> => {
     });
 
     if (!response.ok) {
-      throw new Error(`Rekhta proxy responded with status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    
-    if (result.success && result.data) {
-      return result.data;
-    } else {
-      console.log(`No Rekhta meaning found for "${word}"`);
       return null;
     }
 
-  } catch (error) {
-    // Silently fail if proxy is not available
-    console.log(`Rekhta proxy not available for "${word}":`, error instanceof Error ? error.message : 'Unknown error');
-    return null;
-  }
-};
+    const data = await response.json() as Record<string, unknown>;
+    const entries: Array<Record<string, unknown>> = [];
 
-// Note: Removed English-only dictionary APIs (Wiktionary, Free Dictionary)
-// since all searches will be for Hindi/Urdu words
-
-// Basic dictionary for complex Hindi/Urdu poetry words only
-const basicHindiUrduDictionary: Record<string, WordMeaning> = {
-  // Complex poetic and literary words only
-  // Complex literary and poetic words
-  'ख़्वाब': { word: 'ख़्वाब', meaning: 'dream', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'ग़म': { word: 'ग़म', meaning: 'sorrow, grief', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'कलियाँ': { word: 'कलियाँ', meaning: 'buds, young flowers', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'कांटे': { word: 'कांटे', meaning: 'thorns', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'पथ': { word: 'पथ', meaning: 'path, way', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'हार': { word: 'हार', meaning: 'garland, necklace; defeat', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'हालातों': { word: 'हालातों', meaning: 'conditions, circumstances', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'पलकें': { word: 'पलकें', meaning: 'eyelids', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'बूंदें': { word: 'बूंदें', meaning: 'drops (of rain)', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'बरसातें': { word: 'बरसातें', meaning: 'rainy seasons', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'आवाज़': { word: 'आवाज़', meaning: 'voice, sound', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'ढल': { word: 'ढल', meaning: 'slope, decline', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  'जगाए': { word: 'जगाए', meaning: 'wake up, awaken', partOfSpeech: 'verb', source: 'Basic Dictionary' },
-  
-  // Complex poetic and literary terms (Romanized)
-  'ishq': { word: 'ishq', meaning: 'passionate love, divine love', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'mohabbat': { word: 'mohabbat', meaning: 'love, affection', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'khwab': { word: 'khwab', meaning: 'dream', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'gham': { word: 'gham', meaning: 'sorrow, grief', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'chandan': { word: 'chandan', meaning: 'sandalwood', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'gulab': { word: 'gulab', meaning: 'rose', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'chameli': { word: 'chameli', meaning: 'jasmine', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'chandni': { word: 'chandni', meaning: 'moonlight', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'sitara': { word: 'sitara', meaning: 'star', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'sitare': { word: 'sitare', meaning: 'stars', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'saawan': { word: 'saawan', meaning: 'monsoon season', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'basant': { word: 'basant', meaning: 'spring season', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-
-  // Additional complex literary terms
-  'nazm': { word: 'nazm', meaning: 'poem, verse', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'ghazal': { word: 'ghazal', meaning: 'lyrical poetry form', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'sher': { word: 'sher', meaning: 'couplet, verse', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'matla': { word: 'matla', meaning: 'opening couplet of ghazal', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'maqta': { word: 'maqta', meaning: 'final couplet containing poet\'s name', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'husn': { word: 'husn', meaning: 'beauty', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'junoon': { word: 'junoon', meaning: 'passion, madness', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'intezaar': { word: 'intezaar', meaning: 'waiting, anticipation', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'tanhai': { word: 'tanhai', meaning: 'solitude, loneliness', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'viraag': { word: 'viraag', meaning: 'detachment, separation', partOfSpeech: 'noun', source: 'Basic Dictionary' },
-  'viraha': { word: 'viraha', meaning: 'separation from beloved', partOfSpeech: 'noun', source: 'Basic Dictionary' }
-};
-
-// Try basic dictionary lookup (for common Hindi/Urdu words)
-const fetchFromBasicDictionary = async (word: string): Promise<WordMeaning | null> => {
-  // Try multiple variations of the word
-  const variations = normalizeWord(word);
-  
-  for (const variation of variations) {
-    if (basicHindiUrduDictionary[variation]) {
-      return {
-        ...basicHindiUrduDictionary[variation],
-        word: word // Keep the original word in the response
-      };
+    for (const value of Object.values(data)) {
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          if (item && typeof item === 'object') {
+            entries.push(item as Record<string, unknown>);
+          }
+        }
+      }
     }
+
+    const preferredEntry = entries.find(entry => {
+      const language = entry.language;
+      return typeof language === 'string' && (language === 'Hindi' || language === 'Urdu');
+    }) || entries[0];
+
+    if (!preferredEntry) {
+      return null;
+    }
+
+    const definitions = Array.isArray(preferredEntry.definitions) ? preferredEntry.definitions as Array<Record<string, unknown>> : [];
+    const firstDefinition = definitions.find(def => typeof def?.definition === 'string' && (def.definition as string).trim().length > 0);
+
+    if (!firstDefinition) {
+      return null;
+    }
+
+    const rawDefinition = typeof firstDefinition.definition === 'string' ? firstDefinition.definition : '';
+    const definitionText = sanitizeRichText(rawDefinition) ?? rawDefinition.trim();
+
+    if (!definitionText) {
+      return null;
+    }
+
+    const examples = Array.isArray(firstDefinition.examples)
+      ? (firstDefinition.examples as unknown[])
+          .map(example => sanitizeRichText(example))
+          .filter((example): example is string => Boolean(example))
+      : undefined;
+
+    const lemmaTarget = extractInflectionTarget(rawDefinition);
+    if (lemmaTarget && lemmaTarget !== word) {
+      const lemmaMeaning = await fetchFromWiktionary(lemmaTarget, visited);
+      if (lemmaMeaning) {
+        const inflectionNote = definitionText ? `Inflection: ${definitionText}` : undefined;
+        const combinedExamples = inflectionNote
+          ? [...(lemmaMeaning.examples ?? []), inflectionNote]
+          : lemmaMeaning.examples;
+
+        return {
+          ...lemmaMeaning,
+          word,
+          examples: combinedExamples,
+          source: 'Wiktionary'
+        };
+      }
+    }
+
+    return {
+      word: typeof preferredEntry.word === 'string' && preferredEntry.word.trim().length > 0
+        ? decodeHtmlEntities(preferredEntry.word).trim()
+        : word,
+      meaning: definitionText,
+      partOfSpeech: sanitizeRichText(preferredEntry.partOfSpeech) ?? undefined,
+      etymology: sanitizeRichText(preferredEntry.etymology) ?? undefined,
+      examples,
+      source: 'Wiktionary'
+    };
+  } catch (error) {
+    console.log(`Wiktionary lookup failed for "${word}":`, error instanceof Error ? error.message : 'Unknown error');
   }
-  
-  // Also try the original word as-is (in case it's already in the dictionary)
-  const original = word.toLowerCase().trim();
-  if (basicHindiUrduDictionary[original]) {
-    return basicHindiUrduDictionary[original];
+  return null;
+};
+
+// Try unofficial Google Dictionary API (works with Hindi/Urdu and has CORS support)
+const fetchFromGoogleDictionary = async (word: string): Promise<WordMeaning | null> => {
+  try {
+    // Using unofficial Google Dictionary API through CORS-enabled endpoint
+    const apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/hi/${encodeURIComponent(word)}`;
+
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      if (Array.isArray(data) && data.length > 0) {
+        const entry = data[0];
+        const firstMeaning = entry.meanings?.[0];
+        const definition = firstMeaning?.definitions?.[0];
+
+        return {
+          word: entry.word || word,
+          meaning: definition?.definition || 'Definition found',
+          partOfSpeech: firstMeaning?.partOfSpeech,
+          examples: definition?.example ? [definition.example] : undefined,
+          source: 'Dictionary API'
+        };
+      }
+    }
+
+    // Fallback: Try with English API for romanized Hindi words
+    const romanApiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`;
+    const romanResponse = await fetch(romanApiUrl);
+
+    if (romanResponse.ok) {
+      const romanData = await romanResponse.json();
+
+      if (Array.isArray(romanData) && romanData.length > 0) {
+        const entry = romanData[0];
+        const firstMeaning = entry.meanings?.[0];
+        const definition = firstMeaning?.definitions?.[0];
+
+        return {
+          word: entry.word || word,
+          meaning: definition?.definition || 'Definition found',
+          partOfSpeech: firstMeaning?.partOfSpeech,
+          examples: definition?.example ? [definition.example] : undefined,
+          source: 'Dictionary API'
+        };
+      }
+    }
+  } catch (error) {
+    console.log(`Google Dictionary lookup failed for "${word}":`, error instanceof Error ? error.message : 'Unknown error');
   }
-  
   return null;
 };
 
 // Main function to fetch word meaning from multiple sources
 export const fetchWordMeaning = async (word: string): Promise<DictionaryResponse> => {
   const cleaned = cleanWord(word);
+  const trimmedOriginal = word.trim();
+  const punctuationStripped = trimmedOriginal.replace(/[।,;:!?\-"'()[\]{}]/g, '').trim();
+  const lookupCandidates = Array.from(new Set(
+    [trimmedOriginal, punctuationStripped, cleaned].filter(candidate => candidate.length > 0),
+  ));
   
   if (!cleaned) {
     return {
@@ -200,15 +264,18 @@ export const fetchWordMeaning = async (word: string): Promise<DictionaryResponse
     // Try different sources in order of preference
     let meaning: WordMeaning | null = null;
 
-    // 1. Try basic dictionary first (instant results for complex poetic words)
-    meaning = await fetchFromBasicDictionary(cleaned);
-
-    // 2. Try Rekhta Dictionary via proxy (best for Hindi/Urdu poetry)
-    if (!meaning) {
-      meaning = await fetchFromRekhta(cleaned);
+    // 1. Wiktionary REST API (try variants)
+    for (const candidate of lookupCandidates) {
+      meaning = await fetchFromWiktionary(candidate);
+      if (meaning) break;
     }
 
-    // Note: Removed English-only dictionary APIs since all searches are Hindi/Urdu
+    if (!meaning) {
+      for (const candidate of lookupCandidates) {
+        meaning = await fetchFromGoogleDictionary(candidate);
+        if (meaning) break;
+      }
+    }
 
     if (meaning) {
       // Cache the result
