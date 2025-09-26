@@ -12,7 +12,7 @@
     "generate:sitemap": "node scripts/generateSitemap.js",
     "generate:dictionary": "node scripts/generateDictionaryCache.js",
     "check:dictionary": "node scripts/checkDictionaryFreshness.js",
-    "prebuild": "npm run generate:dictionary && npm run generate:sitemap"
+    "prebuild": "node scripts/maybeGenerateDictionary.js && npm run generate:sitemap"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.8",

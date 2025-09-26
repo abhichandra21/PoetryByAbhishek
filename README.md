@@ -5,7 +5,8 @@ Personal site for publishing bilingual (Devanagari + Roman) poetry with inline w
 ## Dictionary Workflow
 
 - After editing `src/data/poems.json`, run `npm run check:dictionary`. If the script warns that the poems changed more recently than the cache, refresh the cache with `npm run generate:dictionary` before committing.
-- All builds (`npm run build`) regenerate the static cache automatically, but keeping the cache fresh locally lets you verify meanings during development.
+- The build pipeline now uses `scripts/maybeGenerateDictionary.js` to skip regeneration when the existing cache is current. Set `FORCE_DICTIONARY=true` (e.g. `FORCE_DICTIONARY=true npm run build`) when you want to force a refresh.
+- Manual cache refresh is still available with `npm run generate:dictionary` whenever you want to inspect definitions before pushing changes.
 - To debug which source resolved a tooltip while running the dev server, drop this snippet inside `fetchWordMeaning` **only while debugging**:
 
   ```ts

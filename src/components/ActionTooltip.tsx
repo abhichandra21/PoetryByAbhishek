@@ -53,7 +53,7 @@ const ActionTooltip: FC<ActionTooltipProps> = ({ label, children, placement = 't
       onFocus: handleFocus,
       onBlur: handleBlur,
       'aria-describedby': visible ? tooltipId : undefined,
-    });
+    } as Partial<typeof childProps>);
   };
 
   useEffect(() => {
