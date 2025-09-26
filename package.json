@@ -4,13 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run check:dictionary && vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
     "generate:sitemap": "node scripts/generateSitemap.js",
-    "prebuild": "npm run generate:sitemap"
+    "generate:dictionary": "node scripts/generateDictionaryCache.js",
+    "check:dictionary": "node scripts/checkDictionaryFreshness.js",
+    "prebuild": "npm run generate:dictionary && npm run generate:sitemap"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.8",

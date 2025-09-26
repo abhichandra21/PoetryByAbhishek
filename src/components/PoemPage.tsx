@@ -13,10 +13,12 @@ import ScriptToggle from './ScriptToggle';
 import { useScriptPreference } from '../hooks/useScriptPreference';
 import PoemComments from './PoemComments';
 import PoemLike from './PoemLike'; // Add this import
-import TranslationTooltip from './TranslationTooltip';
 import WordTooltip from './WordTooltip';
+import ActionTooltip from './ActionTooltip';
 import { Link } from 'react-router-dom';
+import type { WordMeaning } from '../lib/dictionary';
 import allPoemTranslations, { romanToDevanagariMap } from '../translations/poemTranslations';
+import type { WordTranslation } from '../translations/poemTranslations';
 
 interface PoemPageProps {
   poem: Poem;
@@ -32,6 +34,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
   const { script } = useScriptPreference();
   const [textSize, setTextSize] = useState<TextSize>('medium');
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const [showLookupHelp, setShowLookupHelp] = useState(false);
   const reduceMotion = useReducedMotion();
 
   /* ── persist text‑size preference ─────────────────────────── */
@@ -127,7 +130,8 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     // Find all words that need tooltips
     const wordsToReplace: Array<{
       word: string;
-      translation: string;
+      translation: WordTranslation;
+      devWord: string;
       startIndex: number;
       endIndex: number;
     }> = [];
@@ -141,10 +145,15 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         while ((index = line.toLowerCase().indexOf(romanWord.toLowerCase(), startIndex)) !== -1) {
           const devWord = romanToDevanagariMap[romanWord];
           const translation = allPoemTranslations[devWord];
+          if (!translation) {
+            startIndex = index + romanWord.length;
+            continue;
+          }
 
           wordsToReplace.push({
-            word: line.substring(index, index + romanWord.length), // Use original case from poem
-            translation: translation.meaning,
+            word: line.substring(index, index + romanWord.length),
+            translation,
+            devWord,
             startIndex: index,
             endIndex: index + romanWord.length
           });
@@ -158,9 +167,11 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         let index: number;
 
         while ((index = line.indexOf(devWord, startIndex)) !== -1) {
+          const translation = allPoemTranslations[devWord];
           wordsToReplace.push({
             word: devWord,
-            translation: allPoemTranslations[devWord].meaning,
+            translation,
+            devWord,
             startIndex: index,
             endIndex: index + devWord.length
           });
@@ -211,7 +222,8 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     let lastIndex = 0;
 
     for (let i = 0; i < filteredWordsToReplace.length; i++) {
-      const { word, translation, startIndex, endIndex } = filteredWordsToReplace[i];
+      const { word, translation, devWord, startIndex, endIndex } = filteredWordsToReplace[i];
+      const displayWord = word ?? line.substring(startIndex, endIndex);
 
       // Add text before this word
       if (startIndex > lastIndex) {
@@ -219,14 +231,21 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
       }
 
       // Add the word with a tooltip
+      const manualMeaning: WordMeaning = {
+        word: devWord,
+        meaning: translation.meaning,
+        source: 'Manual Dictionary'
+      };
+
       result.push(
-        <TranslationTooltip
-          key={`tooltip-${i}`}
-          word={word}
-          translation={translation}
+        <WordTooltip
+          key={`manual-tooltip-${i}`}
+          word={displayWord}
+          prefetchedMeaning={manualMeaning}
+          fallbackMeaning={manualMeaning}
         >
-          {line.substring(startIndex, endIndex)}
-        </TranslationTooltip>
+          {displayWord}
+        </WordTooltip>
       );
 
       lastIndex = endIndex;
@@ -266,8 +285,8 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     }
     
     if (React.isValidElement(content)) {
-      if (content.type === TranslationTooltip) {
-        // Don't wrap TranslationTooltip children, they already have tooltips
+      if (content.type === WordTooltip) {
+        // Don't wrap existing tooltip components
         return content;
       }
       
@@ -327,24 +346,49 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         </div>
 
         <div className="flex gap-2">
-          {/* share */}
-          <div className="relative">
+          <ActionTooltip label={showLookupHelp ? 'Hide lookup instructions' : 'Show lookup instructions'}>
             <button
-              onClick={() => setShowShareMenu(!showShareMenu)}
+              onClick={() => setShowLookupHelp((value) => !value)}
               className="p-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors w-11 h-11 flex items-center justify-center tap-target"
-              aria-label="Share poem"
-              aria-haspopup="menu"
-              aria-expanded={showShareMenu}
+              aria-label="Toggle word-meaning help"
+              aria-pressed={showLookupHelp}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8.684 13.342a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                />
+              <svg
+                className="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 21a9 9 0 1 0-9-9 9 9 0 0 0 9 9Z" />
+                <path d="M12 8v4" />
+                <path d="m12 16 .01-.01" />
               </svg>
             </button>
+          </ActionTooltip>
+
+          {/* share */}
+          <div className="relative">
+            <ActionTooltip label="Share this poem">
+              <button
+                onClick={() => setShowShareMenu(!showShareMenu)}
+                className="p-2 bg-paper-accent dark:bg-paper-dark-accent hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 rounded-lg transition-colors w-11 h-11 flex items-center justify-center tap-target"
+                aria-label="Share poem"
+                aria-haspopup="menu"
+                aria-expanded={showShareMenu}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8.684 13.342a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                  />
+                </svg>
+              </button>
+            </ActionTooltip>
 
             {showShareMenu && (
               <motion.div
@@ -360,6 +404,11 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
                     onClick={() => handleShare(p)}
                     className="w-full px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 text-left tap-target"
                     role="menuitem"
+                    title={
+                      p === 'copy'
+                        ? 'Copy link to clipboard'
+                        : `Share on ${p.charAt(0).toUpperCase() + p.slice(1)}`
+                    }
                   >
                     {p.charAt(0).toUpperCase() + p.slice(1)}
                   </button>
@@ -369,6 +418,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
                     onClick={() => handleShare('native')}
                     className="w-full px-4 py-2 hover:bg-accent-light/10 dark:hover:bg-accent-dark/10 text-left tap-target"
                     role="menuitem"
+                    title="Share with more apps"
                   >
                     More…
                   </button>
@@ -383,7 +433,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-paper-accent to-paper-light dark:from-paper-dark-accent dark:to-paper-dark rounded-xl shadow-book -z-10" />
 
       {/* main content box */}
-      <div className="relative bg-notebook-paper dark:bg-notebook-paper-dark rounded-xl p-6 md:p-12 shadow-medium">
+      <div className="relative bg-paper-light dark:bg-paper-dark rounded-xl p-6 md:p-12 shadow-medium border border-ink-light/10 dark:border-ink-dark/10">
 
         {/* Like button - positioned prominently at the top */}
         {/* Removed - now in controls bar */}
@@ -399,27 +449,54 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
           <span className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-0.5 bg-gradient-to-r from-accent-light dark:from-accent-dark to-transparent opacity-50" />
         </motion.h1>
 
-        {/* lines with notebook background */}
-        <div className="relative poem-content">
-          {/* Notebook lines background - only for poem content */}
-          <div className="absolute inset-0 notebook-lines-bg pointer-events-none"></div>
-
-          <div className="relative" style={{ lineHeight: '1.5rem' }}>
-            {displayLines.map((line, i) => (
-              <motion.p
-                key={`${poem.id}-${i}`}
-                custom={i}
-                variants={lineVariants}
-                initial="hidden"
-                animate="visible"
-                className={`${textSizeClass} text-ink-light dark:text-ink-dark indent-4 ${
-                  script === 'devanagari' ? 'hindi' : 'roman'
-                }`}
-                style={{ lineHeight: '1.5rem', marginBottom: '1.5rem' }}
+        {showLookupHelp && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            className="mb-6 rounded-lg border border-accent-light/40 dark:border-accent-dark/40 bg-accent-light/10 dark:bg-accent-dark/10 p-4 text-sm text-ink-light-secondary dark:text-ink-dark-secondary"
+          >
+            <div className="flex flex-col gap-2">
+              <span className="font-medium text-ink-light dark:text-ink-dark">Word meanings</span>
+              <p className="leading-relaxed">
+                Look for the dotted underline. Tap or click those words to see their meaning, related forms, and usage examples. Most entries are pulled straight from Wiktionary, so rare words may take a moment to appear.
+              </p>
+              <button
+                onClick={() => setShowLookupHelp(false)}
+                className="self-start text-xs font-medium text-accent-light dark:text-accent-dark hover:underline tap-target"
               >
-                {processLineWithAllTooltips(line)}
-              </motion.p>
-            ))}
+                Got it
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* lines */}
+        <div className="relative poem-content">
+          <div className="relative">
+            {displayLines.map((line, i) => {
+              const trimmed = line.trim();
+              const isBlank = trimmed.length === 0;
+              const lineHeight = script === 'devanagari' ? '1.75rem' : '1.65rem';
+              const marginBottom = isBlank ? '1rem' : '0.6rem';
+              const indentClass = isBlank ? 'indent-0' : 'indent-4';
+
+              return (
+                <motion.div
+                  key={`${poem.id}-${i}`}
+                  custom={i}
+                  variants={lineVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className={`${textSizeClass} text-ink-light dark:text-ink-dark ${
+                    script === 'devanagari' ? 'hindi' : 'roman'
+                  } ${indentClass}`}
+                  style={{ lineHeight, marginBottom }}
+                >
+                  {isBlank ? <span>&nbsp;</span> : processLineWithAllTooltips(line)}
+                </motion.div>
+              );
+            })}
           </div>
         </div>
 
@@ -449,7 +526,7 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         <PoemComments poemId={poem.id} />
       </div>
 
-      {/* Add CSS variables for tooltip and notebook styling */}
+      {/* Tooltip styling */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -459,7 +536,6 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
             --tooltip-text-secondary: rgba(0, 0, 0, 0.7);
             --tooltip-heading: #333;
             --tooltip-border: rgba(157, 106, 106, 0.6);
-            --notebook-line-color: rgba(139, 111, 91, 0.25);
           }
 
           .dark {
@@ -468,25 +544,13 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
             --tooltip-text-secondary: #cbd5e1;
             --tooltip-heading: #f3f4f6;
             --tooltip-border: rgba(209, 154, 154, 0.6);
-            --notebook-line-color: rgba(212, 185, 150, 0.3);
           }
-          
-          /* Notebook lines background - subtle and elegant */
-          .notebook-lines-bg {
-            background-image:
-              linear-gradient(to bottom, transparent 1.25rem, var(--notebook-line-color) 1.25rem, var(--notebook-line-color) calc(1.25rem + 1px), transparent calc(1.25rem + 1px));
-            background-size: 100% 1.5rem;
-            background-position: 0 0;
-            background-repeat: repeat-y;
-            opacity: 0.7;
-          }
-          
+
           @media print {
             .no-print{display:none!important}
             article{box-shadow:none!important;margin:0!important;padding:20px!important;max-width:100%!important}
             .bg-gradient-to-br{display:none!important}
             .border{border:none!important}
-            .notebook-lines::before{display:none!important}
           }`,
         }}
       />

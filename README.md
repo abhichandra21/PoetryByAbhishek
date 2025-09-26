@@ -1,57 +1,22 @@
-# React + TypeScript + Vite
+# Poetry by Abhishek
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal site for publishing bilingual (Devanagari + Roman) poetry with inline word lookups powered by Wiktionary and a curated fallback dictionary.
 
-Currently, two official plugins are available:
+## Dictionary Workflow
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- After editing `src/data/poems.json`, run `npm run check:dictionary`. If the script warns that the poems changed more recently than the cache, refresh the cache with `npm run generate:dictionary` before committing.
+- All builds (`npm run build`) regenerate the static cache automatically, but keeping the cache fresh locally lets you verify meanings during development.
+- To debug which source resolved a tooltip while running the dev server, drop this snippet inside `fetchWordMeaning` **only while debugging**:
 
-## Expanding the ESLint configuration
+  ```ts
+  if (import.meta.env.DEV) {
+    console.debug(`[dictionary] ${cleaned} → ${(meaning?.source ?? 'unknown').toLowerCase()}`);
+  }
+  ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+  Remember to remove the log before deploying if you prefer a quiet console.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Words always resolve in this order: runtime cache → static cache → Wiktionary → dictionaryapi.dev → manual translations.
 
 ## Subscribing to New Poems
 
@@ -84,3 +49,8 @@ SMTP_PASS=your_password
 MAIL_FROM="Poetry Bot <bot@example.com>"
 ```
 
+## Appearance & Palette
+
+- The site now defaults to a monochrome palette (paper, ink, and accent shades mapped to greys).
+- The header includes a palette toggle (⬛/🎨) so you can swap between monochrome and the original lavender scheme; the choice persists in `localStorage` under `colorPalette`.
+- Dark mode continues to work for both palettes (stored separately as `darkMode`).

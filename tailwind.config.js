@@ -1,4 +1,11 @@
 /** @type {import('tailwindcss').Config} */
+const withOpacity = (variable) => ({ opacityValue }) => {
+  if (opacityValue !== undefined) {
+    return `rgb(var(${variable}) / ${opacityValue})`;
+  }
+  return `rgb(var(${variable}) / 1)`;
+};
+
 export default {
   content: [
     './index.html',
@@ -20,24 +27,22 @@ export default {
       /*  ─────  Colours  ─────────────────────────────────── */
       colors: {
         paper: {
-          light: '#F8F6F9', // Soft lavender white
-          dark: '#0B0A12',  // Deep blue-black
-          accent: '#EFE9F4', // Lavender hint
-          'dark-accent': '#161525', // Deep indigo
+          light: withOpacity('--color-paper-light'),
+          dark: withOpacity('--color-paper-dark'),
+          accent: withOpacity('--color-paper-accent'),
+          'dark-accent': withOpacity('--color-paper-dark-accent'),
         },
         ink: {
-          light: '#1F1A33', // Deep indigo
-          dark: '#F8F6F9',
-          'light-secondary': '#3D355A',
-          'dark-secondary': '#E5E1ED',
+          light: withOpacity('--color-ink-light'),
+          dark: withOpacity('--color-ink-dark'),
+          'light-secondary': withOpacity('--color-ink-light-secondary'),
+          'dark-secondary': withOpacity('--color-ink-dark-secondary'),
+          'light-tertiary': withOpacity('--color-ink-light-tertiary'),
+          'dark-tertiary': withOpacity('--color-ink-dark-tertiary'),
         },
         accent: {
-          light: '#6F5B8B', // Lavender
-          dark: '#A99BC1',
-          hover: {
-            light: '#574873',
-            dark: '#C2B4D8',
-          },
+          light: withOpacity('--color-accent-light'),
+          dark: withOpacity('--color-accent-dark'),
         },
       },
 
