@@ -1,11 +1,14 @@
 import type { FC, ReactElement, ReactNode } from 'react';
-import { useId, useState, useRef, useEffect, cloneElement, isValidElement } from 'react';
+import { cloneElement, isValidElement, useEffect, useId, useRef, useState } from 'react';
 
 interface ActionTooltipProps {
   label: string;
   children: ReactNode;
   placement?: 'top' | 'bottom';
 }
+
+type MouseHandler = (event: React.MouseEvent<HTMLElement>) => void;
+type FocusHandler = (event: React.FocusEvent<HTMLElement>) => void;
 
 const ActionTooltip: FC<ActionTooltipProps> = ({ label, children, placement = 'top' }) => {
   const tooltipId = useId();
@@ -17,44 +20,34 @@ const ActionTooltip: FC<ActionTooltipProps> = ({ label, children, placement = 't
   const hide = () => setVisible(false);
 
   const enhanceChild = (child: ReactElement) => {
-    const {
-      onMouseEnter,
-      onMouseLeave,
-      onFocus,
-      onBlur,
-      ...rest
-    } = child.props as Record<string, unknown>;
+    const childProps = child.props as {
+      onMouseEnter?: MouseHandler;
+      onMouseLeave?: MouseHandler;
+      onFocus?: FocusHandler;
+      onBlur?: FocusHandler;
+    };
 
-    const handleEnter = (event: React.MouseEvent<HTMLElement>) => {
+    const handleEnter: MouseHandler = (event) => {
       show();
-      if (typeof onMouseEnter === 'function') {
-        onMouseEnter(event);
-      }
+      childProps.onMouseEnter?.(event);
     };
 
-    const handleLeave = (event: React.MouseEvent<HTMLElement>) => {
+    const handleLeave: MouseHandler = (event) => {
       hide();
-      if (typeof onMouseLeave === 'function') {
-        onMouseLeave(event);
-      }
+      childProps.onMouseLeave?.(event);
     };
 
-    const handleFocus = (event: React.FocusEvent<HTMLElement>) => {
+    const handleFocus: FocusHandler = (event) => {
       show();
-      if (typeof onFocus === 'function') {
-        onFocus(event);
-      }
+      childProps.onFocus?.(event);
     };
 
-    const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
+    const handleBlur: FocusHandler = (event) => {
       hide();
-      if (typeof onBlur === 'function') {
-        onBlur(event);
-      }
+      childProps.onBlur?.(event);
     };
 
     return cloneElement(child, {
-      ...rest,
       onMouseEnter: handleEnter,
       onMouseLeave: handleLeave,
       onFocus: handleFocus,
@@ -70,22 +63,27 @@ const ActionTooltip: FC<ActionTooltipProps> = ({ label, children, placement = 't
     }
 
     const wrapper = wrapperRef.current;
-    if (!wrapper) return;
+    if (!wrapper) {
+      return;
+    }
 
     const rect = wrapper.getBoundingClientRect();
-    const margin = 18;
-    let nextPlacement: 'top' | 'bottom' = placement;
+    const margin = 16;
 
-    if (placement !== 'bottom' && rect.top < margin) {
-      nextPlacement = 'bottom';
-    } else if (placement !== 'top' && rect.bottom + margin > window.innerHeight) {
-      nextPlacement = 'top';
-    }
+    setComputedPlacement((prev) => {
+      let next = placement;
 
-    if (nextPlacement !== computedPlacement) {
-      setComputedPlacement(nextPlacement);
-    }
-  }, [visible, placement, computedPlacement]);
+      if (placement !== 'bottom' && rect.top < margin) {
+        next = 'bottom';
+      } else if (placement !== 'top' && rect.bottom + margin > window.innerHeight) {
+        next = 'top';
+      } else {
+        next = placement;
+      }
+
+      return next === prev ? prev : next;
+    });
+  }, [visible, placement]);
 
   return (
     <span ref={wrapperRef} className="relative inline-flex">
