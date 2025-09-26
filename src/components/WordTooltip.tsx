@@ -6,21 +6,31 @@ interface WordTooltipProps {
   word: string;
   children: ReactNode;
   className?: string;
+  prefetchedMeaning?: WordMeaning | null;
+  fallbackMeaning?: WordMeaning | null;
 }
 
 const WordTooltip: FC<WordTooltipProps> = ({ 
   word, 
   children,
-  className = ''
+  className = '',
+  prefetchedMeaning = null,
+  fallbackMeaning = null
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
-  const [meaning, setMeaning] = useState<WordMeaning | null>(null);
+  const [meaning, setMeaning] = useState<WordMeaning | null>(prefetchedMeaning ?? null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLSpanElement>(null);
   const [position, setPosition] = useState({ top: true, left: 0 });
+  const resolvedMeaning = meaning ?? fallbackMeaning;
+
+  useEffect(() => {
+    setMeaning(prefetchedMeaning ?? null);
+  }, [prefetchedMeaning]);
 
   // Prevent hydration errors by only rendering tooltip on client
   useEffect(() => {
@@ -39,17 +49,28 @@ const WordTooltip: FC<WordTooltipProps> = ({
     
     try {
       const result = await fetchWordMeaning(targetWord);
-      
+      setHasFetched(true);
+
       if (result.success && result.data) {
         setMeaning(result.data);
+        setError(null);
+      } else if (fallbackMeaning) {
+        setMeaning(fallbackMeaning);
+        setError(null);
       } else {
         setError(result.error || 'Failed to fetch meaning');
       }
     } catch (err) {
       console.error('Error fetching word meaning:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch meaning');
+      if (fallbackMeaning) {
+        setMeaning(fallbackMeaning);
+        setError(null);
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to fetch meaning');
+      }
     } finally {
       setLoading(false);
+      setHasFetched(true);
     }
   };
   
@@ -58,7 +79,7 @@ const WordTooltip: FC<WordTooltipProps> = ({
     setShowTooltip(!showTooltip);
     
     // Only fetch if we don't have meaning and tooltip is being shown
-    if (!meaning && !loading && !showTooltip) {
+    if (!hasFetched && !loading && !showTooltip) {
       fetchMeaning(cleanWord);
     }
   };
@@ -92,7 +113,7 @@ const WordTooltip: FC<WordTooltipProps> = ({
         left: -leftOffset
       });
     }
-  }, [showTooltip, meaning, loading]);
+  }, [showTooltip, meaning, prefetchedMeaning, loading]);
   
   // Close tooltip when clicking outside
   useEffect(() => {
@@ -114,15 +135,15 @@ const WordTooltip: FC<WordTooltipProps> = ({
       <span 
         ref={wordRef}
         className={`dictionary-word cursor-pointer transition-colors duration-200 ${className}`}
-        data-has-meaning={meaning ? 'true' : 'false'}
+        data-has-meaning={resolvedMeaning ? 'true' : 'false'}
         onClick={handleWordClick}
         onMouseEnter={() => {
-          if (meaning && !showTooltip) {
+          if (resolvedMeaning && !showTooltip) {
             setShowTooltip(true);
           }
         }}
         onMouseLeave={() => {
-          if (meaning && showTooltip && !loading) {
+          if (resolvedMeaning && showTooltip && !loading) {
             setShowTooltip(false);
           }
         }}
@@ -173,7 +194,7 @@ const WordTooltip: FC<WordTooltipProps> = ({
             </div>
           )}
           
-          {meaning && !loading && (
+          {resolvedMeaning && !loading && (
             <div>
               <div 
                 style={{ 
@@ -184,10 +205,10 @@ const WordTooltip: FC<WordTooltipProps> = ({
                 }} 
                 className="dark:!text-white"
               >
-                {meaning.word}
-                {meaning.partOfSpeech && (
+                {resolvedMeaning.word}
+                {resolvedMeaning.partOfSpeech && (
                   <span className="ml-2 text-xs px-2 py-1 bg-accent-light/20 dark:bg-accent-dark/20 rounded-full">
-                    {meaning.partOfSpeech}
+                    {resolvedMeaning.partOfSpeech}
                   </span>
                 )}
               </div>
@@ -196,28 +217,28 @@ const WordTooltip: FC<WordTooltipProps> = ({
                 style={{ 
                   color: 'var(--tooltip-text-secondary, rgba(0, 0, 0, 0.7))',
                   fontWeight: 400,
-                  marginBottom: meaning.etymology || meaning.examples ? '8px' : '0'
+                  marginBottom: resolvedMeaning.etymology || resolvedMeaning.examples ? '8px' : '0'
                 }} 
                 className="dark:!text-gray-300"
               >
-                {meaning.meaning}
+                {resolvedMeaning.meaning}
               </div>
               
-              {meaning.etymology && (
+              {resolvedMeaning.etymology && (
                 <div 
                   style={{ 
                     fontSize: '0.8rem',
                     color: 'var(--tooltip-text-secondary, rgba(0, 0, 0, 0.6))',
                     fontStyle: 'italic',
-                    marginBottom: meaning.examples ? '6px' : '0'
+                    marginBottom: resolvedMeaning.examples ? '6px' : '0'
                   }}
                   className="dark:!text-gray-400"
                 >
-                  Etymology: {meaning.etymology}
+                  Etymology: {resolvedMeaning.etymology}
                 </div>
               )}
               
-              {meaning.examples && meaning.examples.length > 0 && (
+              {resolvedMeaning.examples && resolvedMeaning.examples.length > 0 && (
                 <div 
                   style={{ 
                     fontSize: '0.8rem',
@@ -226,7 +247,7 @@ const WordTooltip: FC<WordTooltipProps> = ({
                   className="dark:!text-gray-400"
                 >
                   <div className="font-medium mb-1">Examples:</div>
-                  {meaning.examples.slice(0, 2).map((example, index) => (
+                  {resolvedMeaning.examples.slice(0, 2).map((example, index) => (
                     <div key={index} className="mb-1">• {example}</div>
                   ))}
                 </div>
@@ -234,7 +255,7 @@ const WordTooltip: FC<WordTooltipProps> = ({
             </div>
           )}
           
-          {!meaning && !loading && !error && (
+          {!resolvedMeaning && !loading && !error && (
             <div>
               <div 
                 style={{ 

@@ -13,10 +13,11 @@ import ScriptToggle from './ScriptToggle';
 import { useScriptPreference } from '../hooks/useScriptPreference';
 import PoemComments from './PoemComments';
 import PoemLike from './PoemLike'; // Add this import
-import TranslationTooltip from './TranslationTooltip';
 import WordTooltip from './WordTooltip';
 import { Link } from 'react-router-dom';
+import type { WordMeaning } from '../lib/dictionary';
 import allPoemTranslations, { romanToDevanagariMap } from '../translations/poemTranslations';
+import type { WordTranslation } from '../translations/poemTranslations';
 
 interface PoemPageProps {
   poem: Poem;
@@ -128,7 +129,8 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     // Find all words that need tooltips
     const wordsToReplace: Array<{
       word: string;
-      translation: string;
+      translation: WordTranslation;
+      devWord: string;
       startIndex: number;
       endIndex: number;
     }> = [];
@@ -142,10 +144,15 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         while ((index = line.toLowerCase().indexOf(romanWord.toLowerCase(), startIndex)) !== -1) {
           const devWord = romanToDevanagariMap[romanWord];
           const translation = allPoemTranslations[devWord];
+          if (!translation) {
+            startIndex = index + romanWord.length;
+            continue;
+          }
 
           wordsToReplace.push({
-            word: line.substring(index, index + romanWord.length), // Use original case from poem
-            translation: translation.meaning,
+            word: line.substring(index, index + romanWord.length),
+            translation,
+            devWord,
             startIndex: index,
             endIndex: index + romanWord.length
           });
@@ -159,9 +166,11 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
         let index: number;
 
         while ((index = line.indexOf(devWord, startIndex)) !== -1) {
+          const translation = allPoemTranslations[devWord];
           wordsToReplace.push({
             word: devWord,
-            translation: allPoemTranslations[devWord].meaning,
+            translation,
+            devWord,
             startIndex: index,
             endIndex: index + devWord.length
           });
@@ -212,7 +221,8 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     let lastIndex = 0;
 
     for (let i = 0; i < filteredWordsToReplace.length; i++) {
-      const { word, translation, startIndex, endIndex } = filteredWordsToReplace[i];
+      const { word, translation, devWord, startIndex, endIndex } = filteredWordsToReplace[i];
+      const displayWord = word ?? line.substring(startIndex, endIndex);
 
       // Add text before this word
       if (startIndex > lastIndex) {
@@ -220,14 +230,21 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
       }
 
       // Add the word with a tooltip
+      const manualMeaning: WordMeaning = {
+        word: devWord,
+        meaning: translation.meaning,
+        source: 'Manual Dictionary'
+      };
+
       result.push(
-        <TranslationTooltip
-          key={`tooltip-${i}`}
-          word={word}
-          translation={translation}
+        <WordTooltip
+          key={`manual-tooltip-${i}`}
+          word={displayWord}
+          prefetchedMeaning={manualMeaning}
+          fallbackMeaning={manualMeaning}
         >
-          {line.substring(startIndex, endIndex)}
-        </TranslationTooltip>
+          {displayWord}
+        </WordTooltip>
       );
 
       lastIndex = endIndex;
@@ -267,8 +284,8 @@ const PoemPage: FC<PoemPageProps> = ({ poem }) => {
     }
     
     if (React.isValidElement(content)) {
-      if (content.type === TranslationTooltip) {
-        // Don't wrap TranslationTooltip children, they already have tooltips
+      if (content.type === WordTooltip) {
+        // Don't wrap existing tooltip components
         return content;
       }
       
